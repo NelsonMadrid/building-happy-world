@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building a Happy World | Escuela Bilingüe — Gualjoco, Santa Bárbara</title>
+  <meta name="description" content="Escuela bilingüe de excelencia en Gualjoco, Santa Bárbara, Honduras. Formamos líderes bilingües desde Prekínder hasta Noveno Grado con valores, calidad académica y amor." />
+  <meta name="keywords" content="escuela bilingüe Honduras, Santa Bárbara, Gualjoco, educación bilingüe, colegio privado Honduras" />
+  <meta name="author" content="Building a Happy World" />
+  <meta property="og:title" content="Building a Happy World | Escuela Bilingüe" />
+  <meta property="og:description" content="Educación bilingüe de excelencia en Honduras. Prekínder hasta Noveno Grado." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       NAVBAR
+       ═══════════════════════════════════════════════════════════════ -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#inicio" class="nav-logo">
+        <div class="logo-emblem"><i class="ri-seedling-fill"></i></div>
+        <div class="logo-words">
+          <span class="logo-main" data-i18n="nav.schoolName">Building a Happy World</span>
+          <span class="logo-sub" data-i18n="nav.tagline">Escuela Bilingüe</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#inicio"   class="nav-link" data-i18n="nav.home">Inicio</a>
+        <a href="#historia" class="nav-link" data-i18n="nav.history">Historia</a>
+        <a href="#niveles"  class="nav-link" data-i18n="nav.levels">Niveles</a>
+        <a href="#bilingue" class="nav-link" data-i18n="nav.bilingual">Bilingüe</a>
+        <a href="#equipo"   class="nav-link" data-i18n="nav.team">Equipo</a>
+        <a href="#galeria"  class="nav-link" data-i18n="nav.gallery">Galería</a>
+        <a href="#cancha"   class="nav-link" id="navFieldLink">⚽ Cancha de Fútbol</a>
+        <a href="#pagos"    class="nav-link nav-pay" data-i18n="nav.payments">Pagos</a>
+        <a href="#contacto" class="nav-link nav-enroll" data-i18n="nav.enroll">Inscríbete</a>
+      </nav>
+
+      <div class="nav-controls">
+        <div class="lang-switch-wrap">
+          <span class="lang-lbl" id="lbl-es">ES</span>
+          <button class="lang-toggle" id="langToggle" aria-label="Switch language" role="switch" aria-checked="false">
+            <span class="lang-knob"></span>
+          </button>
+          <span class="lang-lbl" id="lbl-en">EN</span>
+        </div>
+
+        <button class="dark-btn" id="darkToggle" aria-label="Cambiar tema">
+          <i class="ri-moon-line" id="darkIcon"></i>
+        </button>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="hero" id="inicio">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-badge">
+        <i class="ri-map-pin-2-fill"></i>
+        <span data-i18n="hero.location">Gualjoco, Santa Bárbara, Honduras</span>
+      </span>
+      <h1 class="hero-title">
+        <span data-i18n="hero.title1">Educamos con amor.</span><br/>
+        <em data-i18n="hero.title2">Formamos para el mundo.</em>
+      </h1>
+      <p class="hero-sub" data-i18n="hero.subtitle">
+        Educación bilingüe de excelencia desde Prekínder hasta Noveno Grado. Donde cada niño descubre su potencial y construye un futuro brillante.
+      </p>
+      <div class="hero-ctas">
+        <a href="#contacto" class="btn btn-gold" data-i18n="hero.cta1">Solicitar información</a>
+        <a href="#historia" class="btn btn-white" data-i18n="hero.cta2">Conoce nuestra historia</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hs"><b>10+</b><span data-i18n="hero.stat1">Años de excelencia</span></div>
+        <div class="hsdiv"></div>
+        <div class="hs"><b>PreK–9°</b><span data-i18n="hero.stat2">Grados disponibles</span></div>
+        <div class="hsdiv"></div>
+        <div class="hs"><b>2</b><span data-i18n="hero.stat3">Idiomas de formación</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       VALORES BAND
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="val-band">
+    <div class="val-inner">
+      <span><i class="ri-heart-fill"></i> <span data-i18n="values.v1">Valores</span></span>
+      <b>◆</b>
+      <span><i class="ri-global-fill"></i> <span data-i18n="values.v2">Bilingüismo</span></span>
+      <b>◆</b>
+      <span><i class="ri-book-3-fill"></i> <span data-i18n="values.v3">Excelencia</span></span>
+      <b>◆</b>
+      <span><i class="ri-team-fill"></i> <span data-i18n="values.v4">Comunidad</span></span>
+      <b>◆</b>
+      <span><i class="ri-lightbulb-fill"></i> <span data-i18n="values.v5">Innovación</span></span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       HISTORIA
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="historia">
+    <div class="container split-layout">
+      <div class="split-text reveal-left">
+        <span class="chip" data-i18n="history.chip">Nuestra Historia</span>
+        <h2 class="sec-h" data-i18n="history.title">Un sueño que se convirtió en hogar</h2>
+        <p class="sec-p" data-i18n="history.p1">
+          Todo comenzó con un sueño: brindar a los niños de Gualjoco una educación bilingüe de calidad, sin tener que salir de su comunidad. Un grupo de educadores apasionados se unió con esa visión y abrió las puertas de Building a Happy World.
+        </p>
+        <p class="sec-p" data-i18n="history.p2">
+          Lo que empezó con unos pocos estudiantes y mucho amor, hoy es una institución reconocida por su excelencia académica, su ambiente familiar y su compromiso con el bilingüismo desde los primeros años.
+        </p>
+        <div class="history-links">
+          <a href="#equipo" class="btn btn-primary">Conoce a nuestro equipo</a>
+          <a href="#contacto" class="btn btn-outline">Agenda una visita</a>
+        </div>
+      </div>
+      <div class="split-media reveal-right">
+        <div class="img-ph tall">
+          <i class="ri-image-2-line"></i>
+          <p data-i18n="ph.histImg">Foto de la fundación</p>
+          <small>800 × 600 px</small>
+        </div>
+        <div class="founded-badge">
+          <div class="founded-year" data-i18n="history.founded">Fundada</div>
+          <span class="fb-yr">2014</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       NIVELES EDUCATIVOS
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section sec-alt" id="niveles">
+    <div class="container">
+      <div class="sec-header reveal-up">
+        <span class="chip" data-i18n="levels.chip">Oferta Educativa</span>
+        <h2 class="sec-h" data-i18n="levels.title">Niveles educativos</h2>
+        <p class="sec-sub" data-i18n="levels.sub">Acompañamos cada etapa del crecimiento de tu hijo con programas diseñados para su edad, ritmo y potencial.</p>
+      </div>
+      <div class="levels-grid">
+        <div class="level-card reveal-up" style="--delay:.0s;--lc:#F59E0B">
+          <div class="lc-stripe"></div>
+          <div class="lc-ico"><i class="ri-sun-fill"></i></div>
+          <h3 data-i18n="levels.l1.name">Prekínder</h3>
+          <p class="lc-age" data-i18n="levels.l1.age">3 – 4 años</p>
+          <p data-i18n="levels.l1.desc">Juego, exploración y primeros aprendizajes en ambiente bilingüe.</p>
+        </div>
+        <div class="level-card reveal-up" style="--delay:.1s;--lc:#10B981">
+          <div class="lc-stripe"></div>
+          <div class="lc-ico"><i class="ri-plant-fill"></i></div>
+          <h3 data-i18n="levels.l2.name">Kínder</h3>
+          <p class="lc-age" data-i18n="levels.l2.age">5 – 6 años</p>
+          <p data-i18n="levels.l2.desc">Preparación integral con lecto-escritura bilingüe y desarrollo emocional.</p>
+        </div>
+        <div class="level-card reveal-up" style="--delay:.2s;--lc:#3B82F6">
+          <div class="lc-stripe"></div>
+          <div class="lc-ico"><i class="ri-book-2-fill"></i></div>
+          <h3 data-i18n="levels.l3.name">Primaria</h3>
+          <p class="lc-age" data-i18n="levels.l3.age">1° – 6° grado</p>
+          <p data-i18n="levels.l3.desc">Base académica sólida con énfasis en ciencias, tecnología y bilingüismo.</p>
+        </div>
+        <div class="level-card reveal-up" style="--delay:.3s;--lc:#8B5CF6">
+          <div class="lc-stripe"></div>
+          <div class="lc-ico"><i class="ri-graduation-cap-fill"></i></div>
+          <h3 data-i18n="levels.l4.name">Secundaria</h3>
+          <p class="lc-age" data-i18n="levels.l4.age">7° – 9° grado</p>
+          <p data-i18n="levels.l4.desc">Formación para el liderazgo con inglés avanzado y pensamiento crítico.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PROGRAMA BILINGÜE
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="bilingue">
+    <div class="container bh-inner">
+      <div class="bh-text reveal-left">
+        <span class="chip" data-i18n="bilingual.chip">Programa Bilingüe</span>
+        <h2 class="sec-h">
+          <span data-i18n="bilingual.title">Dos idiomas,</span><br/>
+          <em data-i18n="bilingual.titleEm">infinitas oportunidades</em>
+        </h2>
+        <p class="sec-p" data-i18n="bilingual.p">
+          Nuestro programa garantiza fluidez real en español e inglés. No solo aprenden inglés: piensan, crean y sueñan en inglés.
+        </p>
+        <ul class="bi-features">
+          <li><i class="ri-check-line"></i> <span data-i18n="bilingual.f1">Maestros nativos o certificados</span></li>
+          <li><i class="ri-check-line"></i> <span data-i18n="bilingual.f2">Clases parcialmente en inglés</span></li>
+          <li><i class="ri-check-line"></i> <span data-i18n="bilingual.f3">Actividades culturales bilingües</span></li>
+          <li><i class="ri-check-line"></i> <span data-i18n="bilingual.f4">Evaluaciones en ambos idiomas</span></li>
+          <li><i class="ri-check-line"></i> <span data-i18n="bilingual.f5">Preparación para certificaciones</span></li>
+        </ul>
+        <a href="#contacto" class="btn btn-primary" data-i18n="bilingual.cta">Quiero saber más</a>
+      </div>
+      <div class="bh-visual reveal-right">
+        <div class="img-ph medium">
+          <i class="ri-image-2-line"></i>
+          <p data-i18n="ph.bilingual">Foto de clase bilingüe</p>
+          <small>600 × 500 px</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       POR QUÉ ELEGIRNOS
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section sec-alt" id="porquenos">
+    <div class="container">
+      <div class="sec-header reveal-up">
+        <span class="chip" data-i18n="why.chip">¿Por qué nosotros?</span>
+        <h2 class="sec-h" data-i18n="why.title">La diferencia que cambia vidas</h2>
+      </div>
+      <div class="reasons-grid">
+        <div class="reason-card reveal-up" style="--delay:.0s">
+          <span class="rn">01</span><i class="ri-shield-check-fill"></i>
+          <h3 data-i18n="why.r1t">Ambiente seguro</h3>
+          <p data-i18n="why.r1d">Un espacio donde cada niño se siente protegido y valorado.</p>
+        </div>
+        <div class="reason-card reveal-up" style="--delay:.1s">
+          <span class="rn">02</span><i class="ri-user-star-fill"></i>
+          <h3 data-i18n="why.r2t">Docentes apasionados</h3>
+          <p data-i18n="why.r2d">Maestros dedicados al éxito personal y académico de cada alumno.</p>
+        </div>
+        <div class="reason-card reveal-up" style="--delay:.2s">
+          <span class="rn">03</span><i class="ri-heart-fill"></i>
+          <h3 data-i18n="why.r3t">Educación con valores</h3>
+          <p data-i18n="why.r3d">Formamos personas íntegras. El carácter importa tanto como el conocimiento.</p>
+        </div>
+        <div class="reason-card reveal-up" style="--delay:.3s">
+          <span class="rn">04</span><i class="ri-bar-chart-grouped-fill"></i>
+          <h3 data-i18n="why.r4t">Resultados reales</h3>
+          <p data-i18n="why.r4d">Nuestros egresados sobresalen con bases sólidas para su futuro.</p>
+        </div>
+        <div class="reason-card reveal-up" style="--delay:.4s">
+          <span class="rn">05</span><i class="ri-parent-fill"></i>
+          <h3 data-i18n="why.r5t">Familia integrada</h3>
+          <p data-i18n="why.r5d">Comunicación abierta y trabajo conjunto entre padres y maestros.</p>
+        </div>
+        <div class="reason-card reveal-up" style="--delay:.5s">
+          <span class="rn">06</span><i class="ri-building-fill"></i>
+          <h3 data-i18n="why.r6t">Entorno inspirador</h3>
+          <p data-i18n="why.r6d">Instalaciones pensadas para el aprendizaje activo y la creatividad.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       EQUIPO
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="equipo">
+    <div class="container">
+      <div class="sec-header reveal-up">
+        <span class="chip" data-i18n="team.chip">Nuestro Equipo</span>
+        <h2 class="sec-h" data-i18n="team.title">Conoce a nuestro equipo</h2>
+        <p class="sec-sub" data-i18n="team.sub">Profesionales apasionados por la educación, comprometidos con el desarrollo integral de cada estudiante.</p>
+      </div>
+      <div class="teachers-grid" id="teachersGrid"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       INSCRIPCIONES (CTA)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="cta-overlay"></div>
+    <div class="container cta-inner reveal-up">
+      <span class="cta-badge" id="enrollBadge">🎓 Inscripciones Abiertas</span>
+      <h2 class="cta-title" data-i18n="cta.title">Dale a tu hijo el mejor comienzo</h2>
+      <p class="cta-sub" id="ctaSub">Cupos limitados. Asegura el lugar de tu hijo para el próximo ciclo escolar.</p>
+      <div class="cta-btns">
+        <a href="#contacto" class="btn btn-gold" id="ctaBtn1">Inscribir ahora</a>
+        <a href="#" class="btn btn-outline-w" id="ctaWa" data-i18n="cta.btn2">WhatsApp directo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGOS
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section sec-alt" id="pagos">
+    <div class="container">
+      <div class="sec-header reveal-up">
+        <span class="chip" data-i18n="pay.chip">Pagos</span>
+        <h2 class="sec-h" data-i18n="pay.title">Mensualidades y pagos</h2>
+        <p class="sec-sub" data-i18n="pay.sub">Realiza tus pagos de forma rápida, segura y sin complicaciones.</p>
+      </div>
+      <div class="pay-grid">
+        <div class="pay-card pay-bank reveal-up" style="--delay:.0s">
+          <div class="pc-icon"><i class="ri-bank-line"></i></div>
+          <h3 data-i18n="pay.bank.title">Transferencia bancaria</h3>
+          <p class="pc-sub" data-i18n="pay.bank.sub">Depósito o transferencia directa a nuestra cuenta:</p>
+          <div class="bank-info">
+            <div class="bank-row">
+              <span data-i18n="pay.bank.bankLabel">Banco</span>
+              <b id="payBankName">Tu banco aquí</b>
+            </div>
+            <div class="bank-row">
+              <span data-i18n="pay.bank.accountLabel">Cuenta</span>
+              <b id="payAccountNum">XXXX-XXXX-XXXX</b>
+            </div>
+            <div class="bank-row">
+              <span data-i18n="pay.bank.holderLabel">Titular</span>
+              <b id="payAccountHolder">Nombre del titular</b>
+            </div>
+            <div class="bank-row">
+              <span data-i18n="pay.bank.typeLabel">Tipo</span>
+              <b data-i18n="pay.bank.accountType">Cuenta de ahorros</b>
+            </div>
+          </div>
+          <button class="btn btn-primary pay-wa-btn" id="payBankWa">
+            <i class="ri-whatsapp-line"></i>
+            <span data-i18n="pay.bank.sendProof">Enviar comprobante por WhatsApp</span>
+          </button>
+          <p class="pc-hint" data-i18n="pay.bank.hint">Envía foto del comprobante para confirmar tu pago.</p>
+        </div>
+
+        <div class="pay-card pay-wa reveal-up" style="--delay:.1s">
+          <div class="pc-icon pc-icon--wa"><i class="ri-whatsapp-line"></i></div>
+          <h3 data-i18n="pay.wa.title">Pago por WhatsApp</h3>
+          <p class="pc-sub" data-i18n="pay.wa.sub">Coordina tu pago directamente con administración. Rápido y con confirmación inmediata.</p>
+          <ul class="pay-steps">
+            <li><span class="ps-n">1</span><span data-i18n="pay.wa.step1">Realiza tu depósito o transferencia</span></li>
+            <li><span class="ps-n">2</span><span data-i18n="pay.wa.step2">Toma foto al comprobante</span></li>
+            <li><span class="ps-n">3</span><span data-i18n="pay.wa.step3">Envíalo por WhatsApp</span></li>
+            <li><span class="ps-n">4</span><span data-i18n="pay.wa.step4">Recibe tu confirmación de pago</span></li>
+          </ul>
+          <button class="btn btn-gold pay-wa-btn" id="payContactWa">
+            <i class="ri-whatsapp-line"></i>
+            <span data-i18n="pay.wa.btn">Contactar administración</span>
+          </button>
+        </div>
+
+        <div class="pay-card pay-soon reveal-up" style="--delay:.2s">
+          <div class="pc-icon pc-icon--soon"><i class="ri-link"></i></div>
+          <span class="soon-badge" data-i18n="pay.soon.badge">Próximamente</span>
+          <h3 data-i18n="pay.soon.title">Pago en línea</h3>
+          <p class="pc-sub" data-i18n="pay.soon.sub">Estamos trabajando para que puedas pagar con tarjeta o billetera digital directamente desde el sitio.</p>
+          <ul class="soon-list">
+            <li><i class="ri-bank-card-line"></i> Visa / Mastercard</li>
+            <li><i class="ri-paypal-line"></i> PayPal</li>
+            <li><i class="ri-smartphone-line"></i> <span data-i18n="pay.soon.mobile">Billeteras digitales</span></li>
+          </ul>
+          <button class="btn btn-outline-soon" disabled>
+            <i class="ri-time-line"></i>
+            <span data-i18n="pay.soon.btn">En desarrollo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       GALERÍA
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section sec-alt" id="galeria">
+    <div class="container">
+      <div class="sec-header reveal-up">
+        <span class="chip" data-i18n="gallery.chip">Galería</span>
+        <h2 class="sec-h" data-i18n="gallery.title">La vida en nuestra escuela</h2>
+        <p class="sec-sub" data-i18n="gallery.sub">Momentos que capturan nuestra esencia: aprendizaje, alegría y comunidad.</p>
+      </div>
+      <div class="gallery-grid reveal-up">
+        <div class="gi gi-tall"><div class="img-ph gal-ph"><i class="ri-image-line"></i><span>1200×800px</span></div><span class="gi-lbl" data-i18n="gallery.l1">Vida escolar</span></div>
+        <div class="gi"><div class="img-ph gal-ph"><i class="ri-image-line"></i><span>600×400px</span></div><span class="gi-lbl" data-i18n="gallery.l2">Clases</span></div>
+        <div class="gi"><div class="img-ph gal-ph"><i class="ri-image-line"></i><span>600×400px</span></div><span class="gi-lbl" data-i18n="gallery.l3">Actividades</span></div>
+        <div class="gi"><div class="img-ph gal-ph"><i class="ri-image-line"></i><span>600×400px</span></div><span class="gi-lbl" data-i18n="gallery.l4">Deportes</span></div>
+        <div class="gi"><div class="img-ph gal-ph"><i class="ri-image-line"></i><span>600×400px</span></div><span class="gi-lbl" data-i18n="gallery.l5">Arte</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       CONTACTO
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="contacto">
+    <div class="container split-layout">
+      <div class="split-text reveal-left">
+        <span class="chip" data-i18n="contact.chip">Contacto</span>
+        <h2 class="sec-h" data-i18n="contact.title">Hablemos sobre<br/>el futuro de tu hijo</h2>
+        <p class="sec-p" data-i18n="contact.p">Estamos aquí para responder todas tus preguntas. Escríbenos, llámanos o visítanos.</p>
+        <div class="ci-list">
+          <div class="ci-item">
+            <div class="ci-ico"><i class="ri-map-pin-2-fill"></i></div>
+            <div><b data-i18n="contact.locLabel">Ubicación</b><span data-i18n="contact.location">Gualjoco, Santa Bárbara, Honduras</span></div>
+          </div>
+          <div class="ci-item">
+            <div class="ci-ico"><i class="ri-phone-fill"></i></div>
+            <div><b data-i18n="contact.phoneLabel">Teléfono / WhatsApp</b><span id="contactPhone">Número aquí</span></div>
+          </div>
+          <div class="ci-item">
+            <div class="ci-ico"><i class="ri-mail-fill"></i></div>
+            <div><b data-i18n="contact.emailLabel">Correo</b><span>correo@escuela.edu.hn</span></div>
+          </div>
+          <div class="ci-item">
+            <div class="ci-ico"><i class="ri-time-fill"></i></div>
+            <div><b data-i18n="contact.hoursLabel">Horario</b><span data-i18n="contact.hours">Lun–Vie 7:00–16:00</span></div>
+          </div>
+        </div>
+        <div class="contact-socials">
+          <a href="#" aria-label="Facebook"><i class="ri-facebook-fill"></i></a>
+          <a href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+          <a href="#" id="waContact" aria-label="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+        </div>
+      </div>
+      <div class="split-form reveal-right">
+        <h3 data-i18n="form.title">Solicitar información</h3>
+        <p class="form-note" data-i18n="form.note">Completa el formulario y te contactamos muy pronto.</p>
+
+        <div class="fg">
+          <label data-i18n="form.nameLabel">Nombre completo</label>
+          <input type="text" id="formName" data-i18n-ph="form.namePh" placeholder="Tu nombre completo" maxlength="100"/>
+        </div>
+        <div class="fg">
+          <label data-i18n="form.phoneLabel">Teléfono / WhatsApp</label>
+          <input type="tel" id="formPhone" placeholder="+504" maxlength="20"/>
+        </div>
+        <div class="fg">
+          <label data-i18n="form.emailLabel">Correo electrónico</label>
+          <input type="email" id="formEmail" placeholder="tu@correo.com" maxlength="100"/>
+        </div>
+        <div class="fg">
+          <label data-i18n="form.levelLabel">Grado de interés</label>
+          <select id="formLevel">
+            <option value="" data-i18n="form.levelDef">Selecciona un nivel</option>
+            <option data-i18n="form.lvl1">Prekínder</option>
+            <option data-i18n="form.lvl2">Kínder</option>
+            <option data-i18n="form.lvl3">1° – 3° Grado</option>
+            <option data-i18n="form.lvl4">4° – 6° Grado</option>
+            <option data-i18n="form.lvl5">7° – 9° Grado</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label data-i18n="form.msgLabel">Mensaje (opcional)</label>
+          <textarea id="formMsg" data-i18n-ph="form.msgPh" placeholder="¿Alguna pregunta específica?" maxlength="500" rows="3"></textarea>
+        </div>
+
+        <button class="btn btn-primary full-w" id="formSubmit">
+          <i class="ri-send-plane-fill"></i>
+          <span data-i18n="form.submit">Enviar solicitud</span>
+        </button>
+        <p class="form-disc" data-i18n="form.disc">* Tu información es confidencial.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       MAPA
+       ═══════════════════════════════════════════════════════════════ -->
+  <div id="mapa" style="padding: 80px 0; background: var(--sky);">
+    <div class="container">
+      <div class="map-ph">
+        <i class="ri-map-2-line"></i>
+        <p data-i18n="map.ph">Aquí va el mapa de Google Maps</p>
+        <small data-i18n="map.sub">Inserta el iframe con la ubicación exacta</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════════ -->
+
+
+  <!-- ══════════════════════ CANCHA DE FÚTBOL RÁPIDO ══════════════════════ -->
+  <section class="section" id="cancha">
+    <div class="container">
+
+      <div class="sec-header reveal-up">
+        <span class="chip" id="fieldChip">Cancha Sintética</span>
+        <h2 class="sec-h" id="fieldTitle">Cancha de Fútbol Rápido</h2>
+        <p class="sec-sub" id="fieldSub">Grama sintética de primera calidad, iluminación nocturna y espacio para tus eventos.</p>
+      </div>
+
+      <!--
+        FOTOS DE LA CANCHA — Cómo agregar fotos reales:
+        1. Crea la carpeta: images/cancha/
+        2. Reemplaza cada <div class="fg-placeholder...">
+           con: <img src="images/cancha/foto.jpg" alt="Cancha" />
+        Tamaño recomendado: 1200×800 px principal · 600×400 px secundarias
+      -->
+      <div class="field-gallery reveal-up">
+        <div class="fg-item fg-main">
+          <div class="fg-placeholder green">
+            <i class="ri-football-line"></i>
+            <span id="fieldPhoto1">Foto principal · 1200×800 px</span>
+          </div>
+          <div class="fg-overlay"><i class="ri-zoom-in-line"></i></div>
+        </div>
+        <div class="fg-item">
+          <div class="fg-placeholder green">
+            <i class="ri-sun-line"></i>
+            <span id="fieldPhoto2">Vista de día · 600×400 px</span>
+          </div>
+          <div class="fg-overlay"><i class="ri-zoom-in-line"></i></div>
+        </div>
+        <div class="fg-item">
+          <div class="fg-placeholder green">
+            <i class="ri-moon-line"></i>
+            <span id="fieldPhoto3">Vista nocturna · 600×400 px</span>
+          </div>
+          <div class="fg-overlay"><i class="ri-zoom-in-line"></i></div>
+        </div>
+        <div class="fg-item">
+          <div class="fg-placeholder green">
+            <i class="ri-group-line"></i>
+            <span id="fieldPhoto4">Evento / partido · 600×400 px</span>
+          </div>
+          <div class="fg-overlay"><i class="ri-zoom-in-line"></i></div>
+        </div>
+        <div class="fg-item">
+          <div class="fg-placeholder">
+            <i class="ri-image-add-line"></i>
+            <span id="fieldPhoto5">Foto adicional · 600×400 px</span>
+          </div>
+          <div class="fg-overlay"><i class="ri-zoom-in-line"></i></div>
+        </div>
+      </div>
+
+      <div class="field-grid">
+
+        <!-- HORARIOS -->
+        <div class="field-card accent-green reveal-up">
+          <div class="fc-icon green"><i class="ri-calendar-line"></i></div>
+          <div class="fc-title" id="fieldSchedTitle">Horarios de apertura</div>
+          <div class="fc-sub"   id="fieldSchedSub">La cancha está disponible según el siguiente horario.</div>
+          <div class="sched-row">
+            <span class="sched-day"   id="fieldDayWeek">Lun – Vie</span>
+            <span class="sched-time"  id="fieldHoraSemana">3:00 PM – 11:00 PM</span>
+            <span class="sched-badge" id="fieldAvail1">Disponible</span>
+          </div>
+          <div class="sched-row">
+            <span class="sched-day"   id="fieldDayWeekend">Sáb – Dom</span>
+            <span class="sched-time"  id="fieldHoraFinde">7:00 AM – 11:00 PM</span>
+            <span class="sched-badge" id="fieldAvail2">Disponible</span>
+          </div>
+          <div class="sched-row">
+            <span class="sched-day"   id="fieldDayEvent">Eventos</span>
+            <span class="sched-time"  id="fieldDayEventTime">Reserva de día completo</span>
+          </div>
+        </div>
+
+        <!-- PRECIOS -->
+        <div class="field-card accent-gold reveal-up">
+          <div class="fc-icon gold"><i class="ri-price-tag-3-line"></i></div>
+          <div class="fc-title" id="fieldPriceTitle">Tarifas</div>
+          <div class="fc-sub"   id="fieldPriceSub">Precios por hora o por evento. Consulta disponibilidad.</div>
+          <div class="price-row">
+            <div class="price-label">
+              <b    id="fieldPriceWeekLbl">Lunes a Viernes</b>
+              <span id="fieldPriceWeekSub">3:00 PM – 11:00 PM</span>
+            </div>
+            <div class="price-amount" id="fieldPriceSemana">L. 500 / hora</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label">
+              <b    id="fieldPriceWkndLbl">Sábado y Domingo</b>
+              <span id="fieldPriceWkndSub">7:00 AM – 11:00 PM</span>
+            </div>
+            <div class="price-amount" id="fieldPriceFinde">L. 600 / hora</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label">
+              <b    id="fieldPriceEvtLbl">Eventos especiales</b>
+              <span id="fieldPriceEvtSub">Día completo (Sáb – Dom)</span>
+            </div>
+            <div class="price-amount" id="fieldPriceEvento">L. 3,500 / día</div>
+          </div>
+        </div>
+
+        <!-- RESERVAR -->
+        <div class="field-card field-reserve reveal-up">
+          <div class="fr-icon"><i class="ri-whatsapp-line"></i></div>
+          <div class="fc-title" id="fieldReserveTitle">¡Reserva tu hora!</div>
+          <div class="fc-sub"   id="fieldReserveSub">Escríbenos por WhatsApp y confirmamos tu reservación al instante.</div>
+          <div class="field-amenities">
+            <span class="amenity-tag"><i class="ri-football-line"></i><span id="fieldAmenity1">Grama sintética</span></span>
+            <span class="amenity-tag"><i class="ri-flashlight-line"></i><span id="fieldAmenity2">Iluminación nocturna</span></span>
+            <span class="amenity-tag"><i class="ri-trophy-line"></i><span id="fieldAmenity3">Torneos y eventos</span></span>
+            <span class="amenity-tag"><i class="ri-group-line"></i><span id="fieldAmenity4">Fútbol rápido</span></span>
+          </div>
+          <button class="btn btn-gold" id="fieldReserveBtn">
+            <i class="ri-whatsapp-line"></i>
+            <span id="fieldReserveBtnTxt">Reservar por WhatsApp</span>
+          </button>
+          <p class="reserve-note" id="fieldReserveNote">Respuesta inmediata · Sin costo de reserva</p>
+        </div>
+
+      </div><!-- /field-grid -->
+    </div>
+  </section>
+
+  <!-- Lightbox fotos cancha -->
+  <div class="field-lightbox" id="fieldLightbox">
+    <span class="lb-close" id="lbClose"><i class="ri-close-line"></i></span>
+    <img src="" alt="Cancha" id="lbImg" />
+  </div>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="logo-emblem sm"><i class="ri-seedling-fill"></i></div>
+            <div><b>Building a Happy World</b><span data-i18n="nav.tagline">Escuela Bilingüe</span></div>
+          </div>
+          <p data-i18n="footer.desc">Formando líderes bilingües con valores desde Gualjoco, Honduras.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Facebook"><i class="ri-facebook-fill"></i></a>
+            <a href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+            <a href="#" id="waFooter" aria-label="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.nav">Navegación</h4>
+          <a href="#inicio" data-i18n="nav.home">Inicio</a>
+          <a href="#historia" data-i18n="nav.history">Historia</a>
+          <a href="#niveles" data-i18n="nav.levels">Niveles</a>
+          <a href="#bilingue" data-i18n="nav.bilingual">Bilingüe</a>
+          <a href="#equipo" data-i18n="nav.team">Equipo</a>
+          <a href="#galeria" data-i18n="nav.gallery">Galería</a>
+          <a href="#cancha" id="footerFieldLink">Cancha de Fútbol</a>
+          <a href="#pagos" data-i18n="nav.payments">Pagos</a>
+          <a href="#contacto" data-i18n="nav.enroll">Inscríbete</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.levels">Niveles</h4>
+          <a href="#niveles" data-i18n="levels.l1.name">Prekínder</a>
+          <a href="#niveles" data-i18n="levels.l2.name">Kínder</a>
+          <a href="#niveles" data-i18n="levels.l3.name">Primaria</a>
+          <a href="#niveles" data-i18n="levels.l4.name">Secundaria</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.contact">Contacto</h4>
+          <p><i class="ri-map-pin-line"></i> Gualjoco, Santa Bárbara, HN</p>
+          <p><i class="ri-phone-line"></i> <span id="footerPhone">Número aquí</span></p>
+          <p><i class="ri-mail-line"></i> correo@escuela.edu.hn</p>
+          <p><i class="ri-time-line"></i> <span data-i18n="contact.hours">Lun–Vie 7:00–16:00</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container fbot-row">
+        <span>© 2026 Building a Happy World · <span data-i18n="footer.rights">Todos los derechos reservados</span></span>
+        <span><span data-i18n="footer.made">Hecho con</span> <i class="ri-heart-fill"></i> <span data-i18n="footer.for">para Honduras</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       WhatsApp FAB & Toast
+       ═══════════════════════════════════════════════════════════════ -->
+  <a href="#" class="wa-fab" id="waFab" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <i class="ri-whatsapp-line"></i>
+    <span class="wa-pulse"></span>
+    <span class="wa-tip" data-i18n="wa.tip">¡Escríbenos!</span>
+  </a>
+
+  <div class="toast" id="toast">
+    <i class="ri-checkbox-circle-fill"></i>
+    <span data-i18n="toast.msg">¡Gracias! Nos pondremos en contacto pronto.</span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
