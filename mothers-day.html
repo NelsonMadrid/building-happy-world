@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#050505">
+  <title>Mamá · Feliz Día de las Madres</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cormorant+SC:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:        #c9a84c;
+      --gold-light:  #e8d5a3;
+      --gold-dim:    rgba(201,168,76,0.35);
+      --rose:        #e8b4b8;
+      --black:       #050505;
+      --black-soft:  #0c0c0c;
+      --white:       #f5f0eb;
+      --duration:    1.3s;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--black);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--white);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      touch-action: pan-y;
+    }
+
+    /* ─── CANVAS ─────────────────────────────────────── */
+    #particles-canvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ─── CAROUSEL ───────────────────────────────────── */
+    #carousel {
+      position: relative;
+      width: 100%; height: 100vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      opacity: 0;
+      transition: opacity var(--duration) ease;
+      z-index: 1;
+    }
+    .slide.active  { opacity: 1; z-index: 3; }
+    .slide.exiting { opacity: 0; z-index: 2; transition: opacity var(--duration) ease; }
+
+    /* ─── PHOTO BG + KEN BURNS ───────────────────────── */
+    .slide-bg {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    @keyframes kb1 { from{transform:scale(1)   translate(0,0)}     to{transform:scale(1.12) translate(-2%,-1%)} }
+    @keyframes kb2 { from{transform:scale(1.08) translate(1%,1%)}  to{transform:scale(1)    translate(-1%,0)}   }
+    @keyframes kb3 { from{transform:scale(1)    translate(2%,0)}   to{transform:scale(1.1)  translate(-1%,-2%)} }
+    @keyframes kb4 { from{transform:scale(1.05) translate(-1%,1%)} to{transform:scale(1)    translate(2%,-1%)}  }
+    @keyframes kb5 { from{transform:scale(1)    translate(0,2%)}   to{transform:scale(1.12) translate(-2%,-2%)} }
+    @keyframes kb6 { from{transform:scale(1.1)  translate(2%,-1%)} to{transform:scale(1)    translate(0,1%)}    }
+
+    #slide-1.active .slide-bg { animation: kb1 9s ease-in-out forwards; }
+    #slide-2.active .slide-bg { animation: kb2 9s ease-in-out forwards; }
+    #slide-3.active .slide-bg { animation: kb3 9s ease-in-out forwards; }
+    #slide-4.active .slide-bg { animation: kb4 9s ease-in-out forwards; }
+    #slide-5.active .slide-bg { animation: kb5 9s ease-in-out forwards; }
+    #slide-6.active .slide-bg { animation: kb6 9s ease-in-out forwards; }
+
+    .slide-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.05)  0%,
+        rgba(0,0,0,0.25) 35%,
+        rgba(0,0,0,0.75) 100%
+      );
+    }
+
+    /* ─── SLIDE CONTENT ──────────────────────────────── */
+    .slide-content {
+      position: relative;
+      z-index: 4;
+      text-align: center;
+      padding: 0 2rem;
+      padding-bottom: max(5.5rem, calc(env(safe-area-inset-bottom) + 4.5rem));
+      max-width: 480px;
+      width: 100%;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(22px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .slide.active .slide-content > * {
+      animation: fadeUp 1s ease forwards;
+      opacity: 0;
+    }
+    .slide.active .slide-content > *:nth-child(1) { animation-delay:.5s; }
+    .slide.active .slide-content > *:nth-child(2) { animation-delay:.8s; }
+    .slide.active .slide-content > *:nth-child(3) { animation-delay:1.1s; }
+    .slide.active .slide-content > *:nth-child(4) { animation-delay:1.4s; }
+
+    /* ─── DECORATIVE LINES ───────────────────────────── */
+    .line-s {
+      display: block;
+      width: 48px; height: 1px;
+      background: var(--gold);
+      margin: 1rem auto;
+    }
+    .line-l {
+      display: block;
+      width: 130px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      margin: 1.2rem auto;
+    }
+
+    /* ─── COVER SLIDE ────────────────────────────────── */
+    #slide-cover {
+      background: var(--black);
+      justify-content: center;
+    }
+
+    #slide-cover .slide-content {
+      padding-bottom: 0;
+    }
+
+    .cover-frame {
+      position: absolute;
+      inset: clamp(16px, 4vw, 28px);
+      border: 1px solid rgba(201,168,76,0.12);
+      pointer-events: none;
+      z-index: 4;
+    }
+    .cover-frame::before,
+    .cover-frame::after {
+      content:'';
+      position: absolute;
+      width: 22px; height: 22px;
+      border-color: rgba(201,168,76,0.55);
+      border-style: solid;
+    }
+    .cover-frame::before { top:-1px; left:-1px; border-width:1px 0 0 1px; }
+    .cover-frame::after  { bottom:-1px; right:-1px; border-width:0 1px 1px 0; }
+
+    .cover-eyebrow {
+      font-family: 'Cormorant SC', serif;
+      font-size: .62rem;
+      letter-spacing: .38em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: .8rem;
+    }
+
+    .cover-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(5rem, 22vw, 8.5rem);
+      line-height: .92;
+      letter-spacing: .06em;
+      background: linear-gradient(
+        135deg,
+        #a07c2a 0%,
+        var(--gold-light) 35%,
+        #fff8e7 50%,
+        var(--gold-light) 65%,
+        #a07c2a 100%
+      );
+      background-size: 250% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 5s linear infinite !important;
+      opacity: 1 !important;
+      filter: drop-shadow(0 0 40px rgba(201,168,76,.25));
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+
+    .cover-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(.9rem, 3.8vw, 1.15rem);
+      color: var(--rose);
+      letter-spacing: .05em;
+      line-height: 1.9;
+    }
+
+    .cover-signature {
+      font-family: 'Cormorant SC', serif;
+      font-size: .62rem;
+      letter-spacing: .3em;
+      color: rgba(201,168,76,.6);
+      text-transform: uppercase;
+      margin-top: .5rem;
+    }
+
+    /* ─── PHOTO QUOTE ────────────────────────────────── */
+    .photo-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.15rem, 5vw, 1.55rem);
+      color: var(--white);
+      line-height: 1.7;
+      text-shadow: 0 2px 24px rgba(0,0,0,.85);
+      letter-spacing: .015em;
+    }
+
+    /* ─── LETTER SLIDE ───────────────────────────────── */
+    #slide-letter {
+      background: var(--black-soft);
+      justify-content: center;
+    }
+
+    #slide-letter .slide-content {
+      padding-bottom: 0;
+      max-width: 380px;
+    }
+
+    .letter-label {
+      font-family: 'Cormorant SC', serif;
+      font-size: .6rem;
+      letter-spacing: .4em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .letter-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1rem, 4.2vw, 1.25rem);
+      line-height: 1.9;
+      color: rgba(245,240,235,.88);
+      text-align: left;
+    }
+
+    .letter-body p + p { margin-top: 1em; }
+
+    .letter-signature {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 4.5vw, 1.4rem);
+      color: var(--gold-light);
+      margin-top: 1.2rem;
+      text-align: right;
+    }
+
+    /* ─── NAV ARROWS ─────────────────────────────────── */
+    .nav-arrow {
+      position: fixed;
+      top: 50%; transform: translateY(-50%);
+      z-index: 10;
+      background: rgba(0,0,0,.28);
+      border: 1px solid var(--gold-dim);
+      color: rgba(201,168,76,.85);
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all .3s ease;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      font-size: 1.1rem;
+    }
+    .nav-arrow:active {
+      background: rgba(201,168,76,.2);
+      transform: translateY(-50%) scale(.93);
+    }
+    #nav-prev { left: 12px; }
+    #nav-next { right: 12px; }
+
+    /* ─── DOTS ───────────────────────────────────────── */
+    #dots {
+      position: fixed;
+      bottom: max(28px, calc(env(safe-area-inset-bottom) + 14px));
+      left: 50%; transform: translateX(-50%);
+      display: flex; gap: 7px;
+      z-index: 10;
+    }
+    .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(201,168,76,.25);
+      border: 1px solid rgba(201,168,76,.4);
+      cursor: pointer;
+      transition: all .4s ease;
+    }
+    .dot.active {
+      background: var(--gold);
+      transform: scale(1.5);
+      border-color: var(--gold);
+    }
+
+    /* ─── PROGRESS BAR ───────────────────────────────── */
+    #progress-bar {
+      position: fixed; bottom: 0; left: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--gold), var(--rose));
+      z-index: 10;
+      transition: width .08s linear;
+    }
+
+    /* ─── COUNTER ────────────────────────────────────── */
+    #slide-counter {
+      position: fixed;
+      top: max(18px, env(safe-area-inset-top));
+      left: 50%; transform: translateX(-50%);
+      z-index: 10;
+      font-family: 'Cormorant SC', serif;
+      font-size: .62rem;
+      letter-spacing: .3em;
+      color: rgba(201,168,76,.55);
+      pointer-events: none;
+    }
+
+    /* ─── SHARE BUTTON ───────────────────────────────── */
+    #btn-share {
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top));
+      right: 14px;
+      z-index: 10;
+      background: rgba(0,0,0,.38);
+      border: 1px solid var(--gold-dim);
+      color: rgba(201,168,76,.88);
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: all .3s ease;
+    }
+    #btn-share:active { transform: scale(.9); }
+
+    /* ─── MUSIC BUTTON ───────────────────────────────── */
+    #btn-music {
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top));
+      left: 14px;
+      z-index: 10;
+      background: rgba(0,0,0,.38);
+      border: 1px solid var(--gold-dim);
+      color: rgba(201,168,76,.88);
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: all .3s ease;
+    }
+    #btn-music:active { transform: scale(.9); }
+
+    @keyframes pulse-ring {
+      0%   { transform:scale(1);   opacity:.6; }
+      100% { transform:scale(1.6); opacity:0;  }
+    }
+    #btn-music.playing::after {
+      content:'';
+      position:absolute; inset:-5px;
+      border-radius:50%;
+      border:1px solid rgba(201,168,76,.45);
+      animation: pulse-ring 2s ease infinite;
+    }
+
+    /* ─── PAUSE TOAST ────────────────────────────────── */
+    #pause-toast {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%) scale(.6);
+      z-index: 20;
+      color: rgba(201,168,76,.5);
+      font-size: 2.5rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    #pause-toast.show {
+      opacity: 1;
+      transform: translate(-50%,-50%) scale(1);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="particles-canvas"></canvas>
+  <audio id="bg-music" loop preload="none">
+    <!-- Reemplaza MUSIC_URL con la URL de tu canción favorita (MP3/OGG) -->
+    <source src="MUSIC_URL" type="audio/mpeg">
+  </audio>
+
+  <div id="carousel">
+
+    <!-- ══ SLIDE 0 · PORTADA ══════════════════════════ -->
+    <div class="slide active" id="slide-cover">
+      <div class="cover-frame"></div>
+      <div class="slide-content">
+        <p class="cover-eyebrow">Para ti</p>
+        <span class="line-s"></span>
+        <h1 class="cover-title">Mamá</h1>
+        <span class="line-s"></span>
+        <p class="cover-subtitle">
+          Feliz Día de las Madres<br>
+          con todo mi amor
+        </p>
+        <p class="cover-signature">Edgardo &middot; Mayo 2026</p>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 1 ════════════════════════════════════ -->
+    <div class="slide" id="slide-1">
+      <div class="slide-bg" id="bg-1"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <span class="line-l"></span>
+        <p class="photo-quote">
+          De tus manos aprendí<br>
+          que el amor no se dice,<br>
+          se hace.
+        </p>
+        <span class="line-l"></span>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 2 ════════════════════════════════════ -->
+    <div class="slide" id="slide-2">
+      <div class="slide-bg" id="bg-2"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <span class="line-l"></span>
+        <p class="photo-quote">
+          Cada vez que cierro los ojos<br>
+          te veo sonriendo.<br>
+          Y todo tiene sentido.
+        </p>
+        <span class="line-l"></span>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 3 ════════════════════════════════════ -->
+    <div class="slide" id="slide-3">
+      <div class="slide-bg" id="bg-3"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <span class="line-l"></span>
+        <p class="photo-quote">
+          Eres el primer hogar que tuve.<br>
+          El único que nunca perdí.
+        </p>
+        <span class="line-l"></span>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 4 ════════════════════════════════════ -->
+    <div class="slide" id="slide-4">
+      <div class="slide-bg" id="bg-4"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <span class="line-l"></span>
+        <p class="photo-quote">
+          No hay distancia<br>
+          que borre lo que nos une.<br>
+          Ni tiempo que lo enfríe.
+        </p>
+        <span class="line-l"></span>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 5 ════════════════════════════════════ -->
+    <div class="slide" id="slide-5">
+      <div class="slide-bg" id="bg-5"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <span class="line-l"></span>
+        <p class="photo-quote">
+          Tu risa es el sonido<br>
+          más bonito que conozco.
+        </p>
+        <span class="line-l"></span>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 6 ════════════════════════════════════ -->
+    <div class="slide" id="slide-6">
+      <div class="slide-bg" id="bg-6"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <span class="line-l"></span>
+        <p class="photo-quote">
+          Todo lo que soy<br>
+          tiene tu nombre.
+        </p>
+        <span class="line-l"></span>
+      </div>
+    </div>
+
+    <!-- ══ SLIDE 7 · CARTA ════════════════════════════ -->
+    <div class="slide" id="slide-letter">
+      <div class="slide-content">
+        <p class="letter-label">Una carta para ti</p>
+        <span class="line-s"></span>
+        <div class="letter-body">
+          <p>Mamá,</p>
+          <p>Hay cosas que no te he dicho —no porque no las sienta, sino porque las palabras siempre se quedan cortas.</p>
+          <p>Gracias por quedarte cuando era difícil. Por reírte conmigo sin pedir explicaciones. Por ser el tipo de persona que no necesita serlo todo para serlo.</p>
+          <p>Te quiero con una gratitud que no cabe en un solo día. Pero hoy quise que lo supieras más que nunca.</p>
+        </div>
+        <span class="line-l" style="margin-top:1.4rem"></span>
+        <p class="letter-signature">Con amor, Edgardo</p>
+      </div>
+    </div>
+
+  </div><!-- /carousel -->
+
+  <!-- ── UI ──────────────────────────────────────── -->
+  <button class="nav-arrow" id="nav-prev" aria-label="Anterior">&#8592;</button>
+  <button class="nav-arrow" id="nav-next" aria-label="Siguiente">&#8594;</button>
+  <div id="dots"></div>
+  <div id="progress-bar"></div>
+  <div id="slide-counter">1 / 8</div>
+  <div id="pause-toast">⏸</div>
+
+  <button id="btn-share" aria-label="Compartir">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+  </button>
+
+  <button id="btn-music" aria-label="Música">
+    <svg id="icon-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+      <polygon points="5 3 19 12 5 21 5 3"/>
+    </svg>
+    <svg id="icon-pause" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+      <rect x="6" y="4" width="4" height="16" rx="1"/>
+      <rect x="14" y="4" width="4" height="16" rx="1"/>
+    </svg>
+  </button>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── CONFIG ─────────────────────────────────── */
+  const TOTAL      = 8;        // total slides (cover + 6 photos + letter)
+  const INTERVAL   = 6000;     // ms per slide
+  const TICK       = 60;       // ms per progress tick
+
+  /* ── STATE ──────────────────────────────────── */
+  let current      = 0;
+  let autoTimer    = null;
+  let progressTimer= null;
+  let elapsed      = 0;
+  let isPaused     = false;
+  let musicPlaying = false;
+  let touchX0      = 0;
+  let touchY0      = 0;
+  let touchTime    = 0;
+
+  /* ── ELEMENTS ───────────────────────────────── */
+  const slides     = document.querySelectorAll('.slide');
+  const dotsWrap   = document.getElementById('dots');
+  const bar        = document.getElementById('progress-bar');
+  const counter    = document.getElementById('slide-counter');
+  const audio      = document.getElementById('bg-music');
+  const btnMusic   = document.getElementById('btn-music');
+  const iconPlay   = document.getElementById('icon-play');
+  const iconPause  = document.getElementById('icon-pause');
+  const toast      = document.getElementById('pause-toast');
+
+  /* ── DOTS ───────────────────────────────────── */
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+
+  function refreshDots(idx) {
+    dotsWrap.querySelectorAll('.dot').forEach((d, i) =>
+      d.classList.toggle('active', i === idx));
+  }
+
+  /* ── NAVIGATION ─────────────────────────────── */
+  function goTo(idx) {
+    const prev = current;
+    current = ((idx % TOTAL) + TOTAL) % TOTAL;
+    if (prev === current) return;
+
+    slides[prev].classList.remove('active');
+    slides[prev].classList.add('exiting');
+    setTimeout(() => slides[prev].classList.remove('exiting'), 1400);
+
+    slides[current].classList.add('active');
+    refreshDots(current);
+    counter.textContent = (current + 1) + ' / ' + TOTAL;
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  document.getElementById('nav-next').addEventListener('click', () => { next(); resetCycle(); });
+  document.getElementById('nav-prev').addEventListener('click', () => { prev(); resetCycle(); });
+
+  /* ── AUTO-ADVANCE ───────────────────────────── */
+  function startAuto() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(() => { if (!isPaused) next(); }, INTERVAL);
+  }
+
+  function resetCycle() {
+    clearInterval(autoTimer);
+    elapsed = 0;
+    bar.style.width = '0%';
+    startAuto();
+    if (!isPaused) startProgress();
+  }
+
+  /* ── PROGRESS BAR ───────────────────────────── */
+  function startProgress() {
+    clearInterval(progressTimer);
+    progressTimer = setInterval(() => {
+      if (isPaused) return;
+      elapsed = Math.min(elapsed + TICK, INTERVAL);
+      bar.style.width = (elapsed / INTERVAL * 100) + '%';
+    }, TICK);
+  }
+
+  /* ── TOUCH / SWIPE ──────────────────────────── */
+  const car = document.getElementById('carousel');
+
+  car.addEventListener('touchstart', e => {
+    touchX0 = e.touches[0].clientX;
+    touchY0 = e.touches[0].clientY;
+    touchTime = Date.now();
+    // pause while finger is down
+    isPaused = true;
+    toast.classList.add('show');
+  }, { passive: true });
+
+  car.addEventListener('touchend', e => {
+    const dx   = e.changedTouches[0].clientX - touchX0;
+    const dy   = Math.abs(e.changedTouches[0].clientY - touchY0);
+    const dt   = Date.now() - touchTime;
+    const fast = dt < 350;
+
+    if (Math.abs(dx) > 45 && dy < 90 && fast) {
+      toast.classList.remove('show');
+      isPaused = false;
+      if (dx < 0) { next(); } else { prev(); }
+      resetCycle();
+    } else {
+      // tap = pause toggle
+      setTimeout(() => {
+        isPaused = false;
+        toast.classList.remove('show');
+      }, 1200);
+    }
+  }, { passive: true });
+
+  /* ── KEYBOARD ───────────────────────────────── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { next(); resetCycle(); }
+    if (e.key === 'ArrowLeft')  { prev(); resetCycle(); }
+    if (e.key === ' ' || e.key === 'p') {
+      isPaused = !isPaused;
+      toast.classList.toggle('show', isPaused);
+      if (!isPaused) { toast.classList.remove('show'); startProgress(); }
+    }
+  });
+
+  /* ── MUSIC ──────────────────────────────────── */
+  btnMusic.addEventListener('click', () => {
+    if (musicPlaying) {
+      audio.pause();
+      musicPlaying = false;
+      btnMusic.classList.remove('playing');
+      iconPlay.style.display  = '';
+      iconPause.style.display = 'none';
+    } else {
+      audio.play().catch(() => {});
+      musicPlaying = true;
+      btnMusic.classList.add('playing');
+      iconPlay.style.display  = 'none';
+      iconPause.style.display = '';
+    }
+  });
+
+  /* ── SHARE ──────────────────────────────────── */
+  document.getElementById('btn-share').addEventListener('click', async () => {
+    const data = {
+      title: 'Feliz Día de las Madres, Mamá ♥',
+      text:  'Con todo mi amor — Edgardo',
+      url:   window.location.href
+    };
+    if (navigator.canShare && navigator.canShare(data)) {
+      try { await navigator.share(data); } catch (_) {}
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => {
+          const b = document.getElementById('btn-share');
+          b.style.borderColor = 'var(--gold)';
+          setTimeout(() => b.style.borderColor = '', 1000);
+        });
+    }
+  });
+
+  /* ── PARTICLES ──────────────────────────────── */
+  const cvs = document.getElementById('particles-canvas');
+  const ctx  = cvs.getContext('2d');
+  const N    = 45;
+  const pts  = [];
+
+  function resize() {
+    cvs.width  = window.innerWidth;
+    cvs.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize, { passive: true });
+  resize();
+
+  function mkParticle(preload) {
+    return {
+      x:    Math.random() * cvs.width,
+      y:    preload ? Math.random() * cvs.height : -12,
+      r:    .8 + Math.random() * 2.2,
+      vy:   .35 + Math.random() * .6,
+      vx:   (Math.random() - .5) * .25,
+      a:    .08 + Math.random() * .38,
+      rot:  Math.random() * Math.PI * 2,
+      drot: (Math.random() - .5) * .018,
+      petal: Math.random() > .45
+    };
+  }
+
+  for (let i = 0; i < N; i++) pts.push(mkParticle(true));
+
+  function drawParticle(p) {
+    ctx.save();
+    ctx.globalAlpha = p.a;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    if (p.petal) {
+      ctx.fillStyle = 'rgba(201,168,76,1)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.r * .65, p.r * 1.7, 0, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = 'rgba(232,213,163,1)';
+      ctx.beginPath();
+      ctx.arc(0, 0, p.r * .5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    for (const p of pts) {
+      p.x   += p.vx + Math.sin(p.y * .013) * .28;
+      p.y   += p.vy;
+      p.rot += p.drot;
+      if (p.y > cvs.height + 15) Object.assign(p, mkParticle(false));
+      drawParticle(p);
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  /* ── INIT ───────────────────────────────────── */
+  startAuto();
+  startProgress();
+
+})();
+</script>
+</body>
+</html>
