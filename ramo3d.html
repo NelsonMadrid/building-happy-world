@@ -445,37 +445,64 @@ function leafGeometry(){
   return g;
 }
 
-/* ═══════════════ papel: cono con pliegues ═══════════════ */
+/* ═══════════════ papel: cono con pliegues ═══════════════
+   Lo que separa "papel" de "cartón" no son los pliegues sino cuatro cosas:
+   el panel entre dos dobleces se abomba, los dobleces giran un poco al subir,
+   la superficie tiene arruga fina, y el borde tiene espesor (labio enrollado).
+   Todo se atenúa hacia t=0: en el nudo el papel va tenso y ceñido, y así
+   además no se sale por encima del listón.                                  */
 function paperGeometry(o){
   var rSeg=o.rSeg, hSeg=o.hSeg;
-  var vc=(rSeg+1)*(hSeg+1);
+  var LIP = o.lip ? 2 : 0;                       // anillos extra del borde
+  var rows = hSeg + LIP;
+  var vc=(rSeg+1)*(rows+1);
   var pos=new Float32Array(vc*3), col=new Float32Array(vc*3), idx=[], k=0;
-  for (var jh=0; jh<=hSeg; jh++){
-    var t = jh/hSeg;
+
+  for (var jh=0; jh<=rows; jh++){
+    var lipF = jh>hSeg ? (jh-hSeg)/LIP : 0;      // 0..1 dentro del labio
+    var t = Math.min(1, jh/hSeg);
     var rad = o.rBot + (o.rTop-o.rBot)*Math.pow(t, o.flare);
     var y   = o.yBot + (o.yTop-o.yBot)*t;
-    var amp = o.amp * Math.pow(t, 1.15);
+    var amp   = o.amp * Math.pow(t, 1.15);
+    var bowT  = (o.bow||0)     * Math.pow(t, 1.20);
+    var crT   = (o.crinkle||0) * Math.pow(t, 1.40);
+    var twist = (o.twist||0) * t;                // los dobleces espiralan al subir
+
     for (var ja=0; ja<=rSeg; ja++){
       var ang = (ja/rSeg)*TAU;
-      var s  = Math.sin(ang*o.pleats + o.phase);
-      var s2 = Math.sin(ang*o.pleats*2 + o.phase*1.7);              // pliegue secundario
-      var pleat = Math.sign(s)*Math.pow(Math.abs(s), 0.42);         // fold marcado
+      var af  = ang*o.pleats + o.phase + twist;
+      var s   = Math.sin(af);
+      var s2  = Math.sin(af*2 + o.phase*1.7);                       // pliegue secundario
+      var pleat = Math.sign(s)*Math.pow(Math.abs(s), 0.60);         // doblez blando
       // irregularidad de baja frecuencia: ningún pliegue igual al vecino.
       // Acotada: sin acotar, algunas lengüetas del ala se levantaban delante de las rosas.
       var irr = clamp(1 + 0.34*Math.sin(ang*3 + 1.3 + o.phase)
-                        + 0.16*Math.sin(ang*5 - 0.7 + o.phase*2.1), 0.62, 1.38);
-      var r = rad * (1 + amp*irr*pleat + amp*0.22*s2);
+                        + 0.16*Math.sin(ang*5 - 0.7 + o.phase*2.1)
+                        + 0.12*Math.sin(ang*7 + 2.1), 0.62, 1.38);
+      // el paño entre dobleces se abomba hacia afuera (papel en tensión)
+      var bow = bowT * (1 - s*s);
+      // arruga fina, dos octavas con frecuencias no armónicas
+      var cr = crT * (Math.sin(ang*7.3 + t*5.1 + o.phase*3.0)*0.62 +
+                      Math.sin(ang*13.7 - t*8.3 + o.phase)*0.30);
+
+      var r  = rad * (1 + amp*irr*pleat + amp*0.22*s2 + bow + cr);
       var yy = y + (o.rim * Math.pow(t,2.4)) * pleat * irr;         // borde ondulado
+
+      // labio: el papel se enrolla hacia adentro y abajo -> el borde tiene canto
+      if (lipF > 0){ r -= rad*0.055*lipF; yy -= 0.075*lipF; }
+
       pos[k*3]=Math.cos(ang)*r; pos[k*3+1]=yy; pos[k*3+2]=Math.sin(ang)*r;
 
       // sombreado horneado: valles oscuros, crestas claras, fondo del cono en sombra
-      var sh = (0.62 + 0.38*(0.5+0.5*pleat)) * (o.dark + (1-o.dark)*Math.pow(t,0.80));
+      var sh = (0.48 + 0.52*(0.5+0.5*pleat)) * (o.dark + (1-o.dark)*Math.pow(t,0.80));
       sh *= 1 - (o.rimDark||0)*Math.pow(t,2.0);
+      sh *= 1 + (o.rimGlow||0)*Math.pow(t,3.0);   // el borde fino deja pasar luz
+      sh *= 1 + 0.16*lipF;                        // el canto capta luz
       col[k*3]=sh; col[k*3+1]=sh*0.993; col[k*3+2]=sh*0.982;
       k++;
     }
   }
-  for (var i=0;i<hSeg;i++) for (var j=0;j<rSeg;j++){
+  for (var i=0;i<rows;i++) for (var j=0;j<rSeg;j++){
     var a=i*(rSeg+1)+j, b=a+rSeg+1;
     idx.push(a,b,a+1, a+1,b,b+1);
   }
@@ -750,18 +777,20 @@ var paperGroup = new THREE.Group();
 bouquet.add(paperGroup);
 (function(){
   var outer = new THREE.Mesh(
-    paperGeometry({ rSeg:128, hSeg:22, rBot:0.13, rTop:1.58, yBot:-1.10, yTop:0.06,
-                    flare:1.05, amp:0.150, pleats:10, phase:0.0, rim:0.040, dark:0.46, rimDark:0.10 }),
+    paperGeometry({ rSeg:132, hSeg:26, rBot:0.13, rTop:1.58, yBot:-1.10, yTop:0.06,
+                    flare:1.05, amp:0.118, pleats:14, phase:0.0, rim:0.078, dark:0.46,
+                    bow:0.034, crinkle:0.019, twist:0.42, lip:1, rimGlow:0.22 }),
     new THREE.MeshStandardMaterial({
-      color:lin(PAPER_OUT), roughness:0.95, metalness:0, side:THREE.DoubleSide,
+      color:lin(PAPER_OUT), roughness:0.985, metalness:0, side:THREE.DoubleSide,
       vertexColors:true, transparent:true, opacity:0.96
     })
   );
   var inner = new THREE.Mesh(
-    paperGeometry({ rSeg:88, hSeg:18, rBot:0.11, rTop:1.46, yBot:-1.05, yTop:0.10,
-                    flare:1.10, amp:0.120, pleats:8,  phase:0.9, rim:0.035, dark:0.20, rimDark:0.68 }),
+    paperGeometry({ rSeg:96, hSeg:20, rBot:0.11, rTop:1.46, yBot:-1.05, yTop:0.10,
+                    flare:1.10, amp:0.098, pleats:11, phase:0.9, rim:0.040, dark:0.20,
+                    bow:0.026, crinkle:0.014, twist:-0.32, rimDark:0.55 }),
     new THREE.MeshStandardMaterial({
-      color:lin(PAPER_IN), roughness:0.97, metalness:0, side:THREE.DoubleSide,
+      color:lin(PAPER_IN), roughness:0.99, metalness:0, side:THREE.DoubleSide,
       vertexColors:true
     })
   );
@@ -827,7 +856,7 @@ var tails = [];
   });
 
   // banda alrededor del papel (a la altura de la cintura del cono)
-  var band = new THREE.Mesh(new THREE.CylinderGeometry(0.605, 0.545, 0.22, 48, 1, true), satin);
+  var band = new THREE.Mesh(new THREE.CylinderGeometry(0.815, 0.490, 0.22, 56, 1, true), satin);
   band.position.y = -0.72;
   ribbonGroup.add(band);
 
@@ -835,13 +864,13 @@ var tails = [];
   var loopGeo = bowLoopGeometry(0.36, 0.34, 0.090, 0.12);
   for (var s=-1; s<=1; s+=2){
     var loop = new THREE.Mesh(loopGeo, satinShaded);
-    loop.position.set(0, -0.68, 0.62);
+    loop.position.set(0, -0.68, 0.73);
     loop.rotation.z = s*2.30;          // abre el bucle hacia el costado
     loop.rotation.y = s*0.34;          // y lo gira un poco hacia el frente
     ribbonGroup.add(loop);
   }
   var knot = new THREE.Mesh(new THREE.SphereGeometry(0.062, 10, 8), satin);
-  knot.position.set(0, -0.68, 0.65);
+  knot.position.set(0, -0.68, 0.76);
   knot.scale.set(1.5, 1.0, 0.75);
   ribbonGroup.add(knot);
 
