@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1A1016">
+<title>Feliz cumpleaños</title>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     ▼▼▼  EDITÁ SOLO ESTE BLOQUE  ▼▼▼
+     Nombre, mensaje y firma. Nada más abajo necesita tocarse.
+     ══════════════════════════════════════════════════════════════════ -->
+<script>
+window.RAMO_TEXTO = {
+  NOMBRE : "Ana",
+  FECHA  : "5 de agosto",
+  SALUDO : "Feliz cumpleaños,",
+  MENSAJE: "Tenemos poquito de conocernos y ya me alegrás los días. Que hoy te celebren bonito.",
+  FIRMA  : "— Nelson",
+
+  // Pantalla inicial (antes de abrir)
+  PORTADA: "Algo para vos, {NOMBRE}",
+  BOTON  : "Tocá para abrir",
+
+  // Pista que aparece si no arrastrás
+  PISTA  : "Deslizá para girar el ramo"
+};
+</script>
+<!-- ══════════════════════════════════════════════════════════════════
+     ▲▲▲  FIN DEL BLOQUE EDITABLE  ▲▲▲
+     ══════════════════════════════════════════════════════════════════ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#FBF2EC;          /* texto principal sobre fondo oscuro */
+  --ink-soft:#E4D2CD;
+  --accent:#E8907A;
+  --muted:#BCA3AC;
+  --bg-deep:#1A1016;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Karla',system-ui,-apple-system,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(105% 52% at 50% 104%, #5A2733 0%, rgba(90,39,51,0) 60%),
+    radial-gradient(88% 62% at 16% -4%,  #3B2436 0%, rgba(59,36,54,0) 58%),
+    radial-gradient(78% 52% at 92% 6%,   #4A2733 0%, rgba(74,39,51,0) 54%),
+    linear-gradient(168deg,#241621 0%,#2E1B26 46%,#150D13 100%);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  touch-action:none;
+  overscroll-behavior:none;
+}
+
+#canvas-wrap{position:fixed;inset:0;z-index:1}
+canvas{display:block;width:100%;height:100%}
+
+/* ───────── viñeta + scrim de legibilidad ─────────
+   Va POR ENCIMA del canvas y POR DEBAJO del texto.
+   El degradado inferior garantiza contraste del texto
+   sin importar cómo esté girado el ramo.               */
+#scrim{
+  position:fixed;inset:0;z-index:5;pointer-events:none;
+  background:
+    /* banda superior: la pista de arrastre necesita fondo propio,
+       el resplandor del ramo llegaba hasta arriba y la dejaba en 3.3:1 */
+    linear-gradient(to bottom,
+      rgba(14,8,12,.78) 0%,
+      rgba(16,10,14,.42) 7%,
+      rgba(18,11,16,.12) 12%,
+      rgba(18,11,16,0)   17%),
+    /* degradado oscuro desde abajo, detrás del bloque de texto */
+    linear-gradient(to top,
+      rgba(15,9,13,.978) 0%,
+      rgba(16,10,14,.955) 16%,
+      rgba(18,11,16,.875) 27%,
+      rgba(20,12,18,.62) 38%,
+      rgba(22,13,20,.26) 48%,
+      rgba(22,13,20,0)   58%),
+    /* viñeta radial: oscurece las esquinas y enfoca el ramo */
+    radial-gradient(76% 60% at 50% 38%,
+      rgba(8,4,8,0)    36%,
+      rgba(8,4,8,.26)  74%,
+      rgba(5,2,5,.50) 100%);
+}
+/* refuerzo local: halo oscuro justo detrás del texto */
+#scrim::after{
+  content:"";position:absolute;left:50%;bottom:0;
+  width:min(760px,132vw);height:min(58vh,430px);
+  transform:translateX(-50%);
+  background:radial-gradient(58% 76% at 50% 88%,
+    rgba(12,7,11,.88) 0%,
+    rgba(13,8,12,.55) 44%,
+    rgba(13,8,12,0) 74%);
+}
+
+/* ───────── pantalla inicial ───────── */
+#gate{
+  position:fixed;inset:0;z-index:20;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+  background:
+    radial-gradient(105% 52% at 50% 104%, #5A2733 0%, rgba(90,39,51,0) 60%),
+    radial-gradient(88% 62% at 16% -4%,  #3B2436 0%, rgba(59,36,54,0) 58%),
+    radial-gradient(78% 52% at 92% 6%,   #4A2733 0%, rgba(74,39,51,0) 54%),
+    linear-gradient(168deg,#241621 0%,#2E1B26 46%,#150D13 100%);
+  border:0;width:100%;font-family:inherit;color:inherit;cursor:pointer;
+  padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+  transition:opacity .9s ease,visibility .9s;
+  -webkit-tap-highlight-color:transparent;
+}
+#gate.gone{opacity:0;visibility:hidden;pointer-events:none}
+#gate:focus-visible{outline:2px solid var(--accent);outline-offset:-6px}
+.mark{
+  width:30px;height:30px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#F0A48C,#D2624B 72%);
+  box-shadow:0 6px 20px rgba(210,98,75,.28);
+  animation:pulse 2.8s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.16);opacity:.55}}
+.gate-text{
+  font-family:'Fraunces',Georgia,serif;font-weight:300;
+  font-size:clamp(1.35rem,6vw,2rem);text-align:center;line-height:1.3;
+  max-width:18ch;
+}
+.gate-hint{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* ───────── texto sobre la escena ───────── */
+#note{
+  position:fixed;left:0;right:0;bottom:0;z-index:10;
+  padding:0 clamp(20px,6vw,26px) calc(clamp(26px,7vh,40px) + env(safe-area-inset-bottom));
+  text-align:center;pointer-events:none;
+  opacity:0;transform:translateY(16px);
+  transition:opacity 1.5s ease,transform 1.5s cubic-bezier(.2,.8,.25,1);
+}
+#note.in{opacity:1;transform:none}
+.eyebrow{
+  font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;
+  color:#E0CDD3;margin-bottom:9px;font-weight:500;
+}
+.name{
+  font-family:'Fraunces',Georgia,serif;font-weight:400;
+  font-size:clamp(1.9rem,8.6vw,2.7rem);line-height:1.06;margin-bottom:14px;
+  color:var(--ink);
+}
+.name em{
+  font-style:italic;font-weight:300;color:var(--accent);
+  display:block;font-size:.58em;margin-bottom:3px;
+}
+.msg{
+  font-size:clamp(.95rem,3.9vw,1.02rem);line-height:1.62;color:var(--ink-soft);
+  max-width:32ch;margin:0 auto;font-weight:400;
+}
+.sign{
+  margin-top:16px;font-family:'Fraunces',Georgia,serif;font-style:italic;
+  font-size:1rem;color:#DCC7C4;
+}
+
+/* ───────── pista de arrastre ───────── */
+#drag-hint{
+  position:fixed;top:calc(20px + env(safe-area-inset-top));left:0;right:0;z-index:10;
+  text-align:center;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+  color:#E2D2D8;
+  opacity:0;transition:opacity 1.1s ease;pointer-events:none;
+}
+#drag-hint.in{opacity:.95}
+
+@media (prefers-reduced-motion: reduce){
+  .mark{animation:none}
+  #note{transition-duration:.35s}
+  #gate{transition-duration:.35s}
+}
+</style>
+</head>
+<body>
+
+<div id="canvas-wrap"></div>
+<div id="scrim"></div>
+
+<div id="drag-hint" data-slot="PISTA"></div>
+
+<div id="note">
+  <p class="eyebrow" data-slot="FECHA"></p>
+  <h1 class="name"><em data-slot="SALUDO"></em><span data-slot="NOMBRE"></span></h1>
+  <p class="msg" data-slot="MENSAJE"></p>
+  <p class="sign" data-slot="FIRMA"></p>
+</div>
+
+<button id="gate">
+  <span class="mark"></span>
+  <span class="gate-text" data-slot="PORTADA"></span>
+  <span class="gate-hint" data-slot="BOTON"></span>
+</button>
+
+<script>
+/* Rellena el texto desde RAMO_TEXTO. Corre aunque falle Three.js. */
+(function(){
+  var T = window.RAMO_TEXTO || {};
+  document.querySelectorAll('[data-slot]').forEach(function(el){
+    var v = T[el.getAttribute('data-slot')];
+    if (typeof v === 'string') el.textContent = v.replace(/\{NOMBRE\}/g, T.NOMBRE || '');
+  });
+  document.title = (T.SALUDO || 'Feliz cumpleaños').replace(/,$/,'') + (T.NOMBRE ? ' ' + T.NOMBRE : '');
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+if (typeof THREE === 'undefined'){
+  // Sin WebGL/Three: al menos que el mensaje se lea.
+  document.getElementById('gate').addEventListener('click', function(){
+    this.classList.add('gone');
+    document.getElementById('note').classList.add('in');
+  }, {once:true});
+  return;
+}
+
+var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var TAU = Math.PI * 2;
+var GOLDEN = Math.PI * (3 - Math.sqrt(5));   // ángulo áureo
+
+/* ═══════════════ paleta ═══════════════ */
+var ROSE_TONES = [0x9C1E31, 0x84142A, 0xAE2A3C, 0x6B0F22];  // familia rojo borgoña
+var LEAF_TONES = [0x3E5C39, 0x4A6B41, 0x334E30, 0x557A48];
+var PAPER_OUT  = 0xE6D5BA;   // papel crema — contrasta contra el fondo oscuro
+var PAPER_IN   = 0x8E7355;
+var RIBBON_COL = 0xC9A46E;   // satén champán
+
+/* ═══════════════ utilidades ═══════════════ */
+function rng(seed){                       // PRNG determinista
+  var s = seed >>> 0;
+  return function(){
+    s ^= s << 13; s >>>= 0;
+    s ^= s >> 17;
+    s ^= s << 5;  s >>>= 0;
+    return s / 4294967296;
+  };
+}
+function lin(hex){                        // hex sRGB -> Color lineal
+  return new THREE.Color(hex).convertSRGBToLinear();
+}
+function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+function easeOutCubic(x){ return 1 - Math.pow(1-x,3); }
+function easeOutBack(x){ var c=1.42; return 1 + (c+1)*Math.pow(x-1,3) + c*Math.pow(x-1,2); }
+function smoothstep(a,b,x){ var t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+
+/* Une geometrías indexadas (position/normal/color) aplicando matriz y color. */
+function mergeGeos(parts){
+  var vTotal=0, iTotal=0, i, j;
+  for (i=0;i<parts.length;i++){
+    vTotal += parts[i].geo.attributes.position.count;
+    iTotal += parts[i].geo.index.count;
+  }
+  var pos = new Float32Array(vTotal*3);
+  var nor = new Float32Array(vTotal*3);
+  var col = new Float32Array(vTotal*3);
+  var idx = (vTotal > 65535) ? new Uint32Array(iTotal) : new Uint16Array(iTotal);
+  var vOff=0, iOff=0;
+  var nm = new THREE.Matrix3();
+  var v = new THREE.Vector3();
+
+  for (i=0;i<parts.length;i++){
+    var g = parts[i].geo, m = parts[i].matrix, c = parts[i].color;
+    var p = g.attributes.position, n = g.attributes.normal, gi = g.index;
+    var gc = g.attributes.color;      // AO horneada en la propia geometría
+    nm.getNormalMatrix(m);
+    for (j=0;j<p.count;j++){
+      v.fromBufferAttribute(p,j).applyMatrix4(m);
+      pos[(vOff+j)*3]=v.x; pos[(vOff+j)*3+1]=v.y; pos[(vOff+j)*3+2]=v.z;
+      v.fromBufferAttribute(n,j).applyMatrix3(nm).normalize();
+      nor[(vOff+j)*3]=v.x; nor[(vOff+j)*3+1]=v.y; nor[(vOff+j)*3+2]=v.z;
+      if (gc){
+        col[(vOff+j)*3]=c.r*gc.getX(j); col[(vOff+j)*3+1]=c.g*gc.getY(j); col[(vOff+j)*3+2]=c.b*gc.getZ(j);
+      } else {
+        col[(vOff+j)*3]=c.r; col[(vOff+j)*3+1]=c.g; col[(vOff+j)*3+2]=c.b;
+      }
+    }
+    for (j=0;j<gi.count;j++) idx[iOff+j] = gi.getX(j) + vOff;
+    vOff += p.count; iOff += gi.count;
+  }
+  var out = new THREE.BufferGeometry();
+  out.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  out.setAttribute('normal',   new THREE.BufferAttribute(nor,3));
+  out.setAttribute('color',    new THREE.BufferAttribute(col,3));
+  out.setIndex(new THREE.BufferAttribute(idx,1));
+  return out;
+}
+
+/* ═══════════════ geometría de pétalo (una sola, compartida) ═══════════════
+   Rejilla paramétrica: u = base→punta, v = ancho.
+   Se curva en copa (cóncava hacia -Z) y se reclina hacia +Z.          */
+function petalGeometry(segU, segV){
+  var vc=(segU+1)*(segV+1);
+  var pos=new Float32Array(vc*3), uv=new Float32Array(vc*2);
+  var idx=[], k=0, a, b;
+  for (var ju=0; ju<=segU; ju++){
+    var u = ju/segU;
+    // perfil de ancho: angosto en la base, ancho y redondeado en la punta
+    var w = Math.pow(Math.sin(Math.PI*Math.pow(u,0.66)), 0.52);
+    for (var jv=0; jv<=segV; jv++){
+      var v = -1 + 2*jv/segV;
+      pos[k*3]   = v * w * 0.82;                       // x — ancho
+      pos[k*3+1] = u;                                  // y — largo
+      pos[k*3+2] = -(v*v) * w * 0.30 * (0.30+0.70*u);  // z — copa
+      uv[k*2]=(v+1)*0.5; uv[k*2+1]=u;
+      k++;
+    }
+  }
+  for (var i=0;i<segU;i++) for (var j=0;j<segV;j++){
+    a = i*(segV+1)+j; b = a+segV+1;
+    idx.push(a,b,a+1, a+1,b,b+1);
+  }
+  var g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  g.setAttribute('uv', new THREE.BufferAttribute(uv,2));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+/* Aplica reclinación/rizo de punta + hornea oclusión ambiental en el pétalo.
+   La AO es lo que hace que se lea la profundidad entre pétalos: la base queda
+   en sombra y el borde superior recibe luz.                                  */
+function shapePetal(base, bend, tipCurl, aoDepth){
+  var g = base.clone();
+  var p = g.attributes.position;
+  var uvA = g.attributes.uv;
+  var col = new Float32Array(p.count*3);
+  for (var i=0;i<p.count;i++){
+    var u = p.getY(i);
+    var z = p.getZ(i);
+    z += bend * u * u;                                              // reclinar
+    var tv = Math.max(0,(u-0.60)/0.40);
+    z += tipCurl * tv * tv;                                         // rizo de punta
+    p.setZ(i, z);
+
+    // AO: oscuro en la base (encajonado), claro hacia la punta y los bordes
+    var v = uvA.getX(i)*2 - 1;                                      // -1..1 ancho
+    var ao = (1-aoDepth) + aoDepth * smoothstep(0.02, 0.62, u);
+    ao *= 1 + 0.10*Math.abs(v)*u;                                   // borde más claro
+    ao = clamp(ao, 0, 1.25);
+    col[i*3]=ao; col[i*3+1]=ao*0.995; col[i*3+2]=ao*0.985;          // leve calidez
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(col,3));
+  g.computeVertexNormals();
+  return g;
+}
+
+var PETAL_BASE = petalGeometry(6, 6);
+
+/* ═══════════════ cabeza de rosa ═══════════════
+   4 capas concéntricas + corazón, con giro en espiral entre capas.
+   Externas abiertas, internas casi cerradas.                        */
+function buildRoseHead(seed){
+  var R = rng(seed);
+  var layers = [
+    { n: 7, r:0.62, tilt:1.44, s:1.06, bend: 0.48, curl:-0.36, y:-0.07, shade:1.00, ao:0.30 },
+    { n: 7, r:0.48, tilt:1.16, s:0.94, bend: 0.30, curl:-0.22, y: 0.01, shade:0.99, ao:0.40 },
+    { n: 6, r:0.36, tilt:0.92, s:0.80, bend: 0.14, curl:-0.06, y: 0.08, shade:0.96, ao:0.50 },
+    { n: 6, r:0.25, tilt:0.64, s:0.66, bend: 0.00, curl: 0.10, y: 0.14, shade:0.91, ao:0.58 },
+    { n: 5, r:0.14, tilt:0.38, s:0.52, bend:-0.18, curl: 0.22, y: 0.19, shade:0.85, ao:0.64 },
+    { n: 4, r:0.06, tilt:0.14, s:0.40, bend:-0.32, curl: 0.32, y: 0.24, shade:0.76, ao:0.68 }
+  ];
+  var parts=[], m=new THREE.Matrix4(), t=new THREE.Matrix4(), q=new THREE.Quaternion();
+
+  for (var L=0; L<layers.length; L++){
+    var ly = layers[L];
+    var geo = shapePetal(PETAL_BASE, ly.bend, ly.curl, ly.ao);
+    var phase = L * GOLDEN;
+    for (var i=0;i<ly.n;i++){
+      var a = phase + (i/ly.n)*TAU + (R()-0.5)*0.22;
+      var tilt = ly.tilt + (R()-0.5)*0.20;
+      var sc   = ly.s * (0.90 + R()*0.20);
+      var rad  = ly.r * (0.92 + R()*0.16);
+      var roll = (R()-0.5)*0.42 + 0.16;          // giro sobre su propio eje
+
+      m.identity();
+      m.makeRotationY(a);                                        // 3) azimut
+      t.makeTranslation(0, ly.y, rad);           m.multiply(t);  // 2) desplazar
+      t.makeRotationX(tilt);                     m.multiply(t);  // 1) inclinar
+      q.setFromAxisAngle(new THREE.Vector3(0,1,0), roll);
+      t.makeRotationFromQuaternion(q);           m.multiply(t);
+      // ancho/alto irregular por pétalo: ninguno idéntico
+      t.makeScale(sc*(0.84+R()*0.30), sc*(0.90+R()*0.20), sc);   m.multiply(t);
+
+      var sh = ly.shade * (0.94 + R()*0.12);
+      parts.push({ geo:geo, matrix:m.clone(), color:new THREE.Color(sh,sh,sh) });
+    }
+  }
+  // corazón: tapa el centro para que no se vea a través
+  var core = new THREE.SphereGeometry(0.20, 10, 8);
+  m.makeTranslation(0, 0.20, 0);
+  parts.push({ geo:core, matrix:m.clone(), color:new THREE.Color(0.34,0.30,0.31) });
+  // base: cierra la parte inferior de la cabeza
+  var cup = new THREE.SphereGeometry(0.52, 12, 6, 0, TAU, Math.PI*0.52, Math.PI*0.48);
+  m.makeTranslation(0, 0.10, 0);
+  parts.push({ geo:cup, matrix:m.clone(), color:new THREE.Color(0.30,0.27,0.28) });
+
+  var g = mergeGeos(parts);
+  // normalizar a radio 1 y apoyar el "cuello" cerca del origen
+  g.computeBoundingSphere();
+  var k = 1 / g.boundingSphere.radius;
+  g.scale(k,k,k);
+  g.translate(0, -g.boundingSphere.center.y*k*0.55, 0);
+  g.computeBoundingSphere();
+  return g;
+}
+
+/* ═══════════════ hoja ═══════════════ */
+function leafGeometry(){
+  var segU=6, segV=4;
+  var vc=(segU+1)*(segV+1);
+  var pos=new Float32Array(vc*3), col=new Float32Array(vc*3), idx=[], k=0;
+  for (var ju=0; ju<=segU; ju++){
+    var u=ju/segU;
+    var w = Math.pow(Math.sin(Math.PI*Math.pow(u,0.74)), 0.85) * (1-0.22*u);
+    for (var jv=0; jv<=segV; jv++){
+      var v=-1+2*jv/segV;
+      pos[k*3]   = v*w*0.30;
+      pos[k*3+1] = u;
+      pos[k*3+2] = -(v*v)*w*0.15 + 0.22*u*u;   // nervadura + curva hacia afuera
+      // AO: base en sombra, punta iluminada; nervadura central algo más clara
+      var ao = 0.52 + 0.48*smoothstep(0.0,0.55,u);
+      ao *= 1 - 0.14*Math.abs(v);
+      col[k*3]=ao; col[k*3+1]=ao; col[k*3+2]=ao;
+      k++;
+    }
+  }
+  for (var i=0;i<segU;i++) for (var j=0;j<segV;j++){
+    var a=i*(segV+1)+j, b=a+segV+1;
+    idx.push(a,b,a+1, a+1,b,b+1);
+  }
+  var g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  g.setAttribute('color', new THREE.BufferAttribute(col,3));
+  g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+
+/* ═══════════════ papel: cono con pliegues ═══════════════ */
+function paperGeometry(o){
+  var rSeg=o.rSeg, hSeg=o.hSeg;
+  var vc=(rSeg+1)*(hSeg+1);
+  var pos=new Float32Array(vc*3), col=new Float32Array(vc*3), idx=[], k=0;
+  for (var jh=0; jh<=hSeg; jh++){
+    var t = jh/hSeg;
+    var rad = o.rBot + (o.rTop-o.rBot)*Math.pow(t, o.flare);
+    var y   = o.yBot + (o.yTop-o.yBot)*t;
+    var amp = o.amp * Math.pow(t, 1.15);
+    for (var ja=0; ja<=rSeg; ja++){
+      var ang = (ja/rSeg)*TAU;
+      var s  = Math.sin(ang*o.pleats + o.phase);
+      var s2 = Math.sin(ang*o.pleats*2 + o.phase*1.7);              // pliegue secundario
+      var pleat = Math.sign(s)*Math.pow(Math.abs(s), 0.42);         // fold marcado
+      // irregularidad de baja frecuencia: ningún pliegue igual al vecino.
+      // Acotada: sin acotar, algunas lengüetas del ala se levantaban delante de las rosas.
+      var irr = clamp(1 + 0.34*Math.sin(ang*3 + 1.3 + o.phase)
+                        + 0.16*Math.sin(ang*5 - 0.7 + o.phase*2.1), 0.62, 1.38);
+      var r = rad * (1 + amp*irr*pleat + amp*0.22*s2);
+      var yy = y + (o.rim * Math.pow(t,2.4)) * pleat * irr;         // borde ondulado
+      pos[k*3]=Math.cos(ang)*r; pos[k*3+1]=yy; pos[k*3+2]=Math.sin(ang)*r;
+
+      // sombreado horneado: valles oscuros, crestas claras, fondo del cono en sombra
+      var sh = (0.62 + 0.38*(0.5+0.5*pleat)) * (o.dark + (1-o.dark)*Math.pow(t,0.80));
+      sh *= 1 - (o.rimDark||0)*Math.pow(t,2.0);
+      col[k*3]=sh; col[k*3+1]=sh*0.993; col[k*3+2]=sh*0.982;
+      k++;
+    }
+  }
+  for (var i=0;i<hSeg;i++) for (var j=0;j<rSeg;j++){
+    var a=i*(rSeg+1)+j, b=a+rSeg+1;
+    idx.push(a,b,a+1, a+1,b,b+1);
+  }
+  var g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  g.setAttribute('color', new THREE.BufferAttribute(col,3));
+  g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+
+/* ═══════════════ lazo de listón ═══════════════
+   Banda plana que recorre una lágrima cerrada: se lee como el bucle
+   de un moño real, no como un toro.                                */
+function bowLoopGeometry(L, H, w, bulge){
+  var N=30;
+  var pos=new Float32Array((N+1)*2*3), col=new Float32Array((N+1)*2*3), idx=[];
+  for (var i=0;i<=N;i++){
+    var ang = (i/N)*TAU;
+    var cx =  L*Math.sin(ang);
+    var cy = -H*(1-Math.cos(ang))*0.5;
+    // normal en el plano de la lágrima
+    var tx =  L*Math.cos(ang), ty = H*Math.sin(ang)*0.5;
+    var tl = Math.hypot(tx,ty) || 1;
+    var nx = -ty/tl, ny = tx/tl;
+    var open = Math.sin(ang*0.5);              // 0 en el nudo, 1 en la punta
+    var ww = w*(0.42 + 0.58*open);             // se estrecha hacia el nudo
+    var z  = bulge*open;
+    var sh = 0.72 + 0.28*open;                 // el nudo queda en sombra
+    for (var k=0;k<2;k++){
+      var sgn = k? 1 : -1, o=(i*2+k)*3;
+      pos[o]=cx+nx*ww*sgn; pos[o+1]=cy+ny*ww*sgn; pos[o+2]=z;
+      col[o]=sh; col[o+1]=sh; col[o+2]=sh;
+    }
+    if (i<N){ var a=i*2, b=a+2; idx.push(a,b,a+1, a+1,b,b+1); }
+  }
+  var g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  g.setAttribute('color', new THREE.BufferAttribute(col,3));
+  g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+
+/* ═══════════════ escena ═══════════════ */
+var wrap = document.getElementById('canvas-wrap');
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 0.1, 100);
+
+var renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));       // cap DPR = 2
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.02;
+wrap.appendChild(renderer.domElement);
+
+/* ── iluminación cálida de estudio ── */
+scene.add(new THREE.HemisphereLight(0xFFE8D2, 0x2A1620, 0.55));      // fill suave
+var key = new THREE.DirectionalLight(0xFFEFD8, 2.05);                // key cálida
+key.position.set(3.4, 6.0, 4.6); scene.add(key);
+var rimPink = new THREE.DirectionalLight(0xFF6E9E, 2.30);            // rim rosada detrás
+rimPink.position.set(-2.4, 2.8, -5.2); scene.add(rimPink);
+var rimWarm = new THREE.DirectionalLight(0xFFB877, 1.05);            // contra-rim tibia
+rimWarm.position.set(5.2, 0.8, -3.0); scene.add(rimWarm);
+scene.add(new THREE.AmbientLight(0xFFE6DA, 0.22));
+
+/* ── grupo que gira ── */
+var bouquet = new THREE.Group();
+bouquet.position.y = -0.10;
+scene.add(bouquet);
+
+/* ── resplandor de fondo ── */
+(function(){
+  var c=document.createElement('canvas'); c.width=c.height=256;
+  var x=c.getContext('2d');
+  var gr=x.createRadialGradient(128,128,0,128,128,128);
+  gr.addColorStop(0,   'rgba(255,150,140,0.55)');
+  gr.addColorStop(0.42,'rgba(210,80,110,0.24)');
+  gr.addColorStop(1,   'rgba(150,50,90,0)');
+  x.fillStyle=gr; x.fillRect(0,0,256,256);
+  var tex=new THREE.CanvasTexture(c);
+  var glow=new THREE.Mesh(
+    new THREE.PlaneGeometry(14,14),
+    new THREE.MeshBasicMaterial({map:tex, transparent:true, depthWrite:false,
+                                 blending:THREE.AdditiveBlending, opacity:0.95})
+  );
+  glow.position.set(0,0.3,-4.4);
+  scene.add(glow);
+})();
+
+/* ═══════════════ el ramo ═══════════════ */
+var DOME_R = 1.52;          // radio horizontal del domo
+var DOME_FLAT = 0.70;       // achatamiento vertical (1 = semiesfera perfecta)
+var DOME_Y = 0.46;          // centro del domo
+var N_ROSES = 76;
+var HEAD_R = 0.345;         // radio de cada cabeza
+
+var domeGroup = new THREE.Group();
+bouquet.add(domeGroup);
+
+/* 4 variantes de cabeza → 4 InstancedMesh. Cada rosa: escala y rotación ±15%. */
+var roseMat = new THREE.MeshStandardMaterial({
+  vertexColors:true, roughness:0.62, metalness:0.0,
+  side:THREE.DoubleSide, flatShading:false
+});
+
+var VARIANTS = 4;
+var heads = [];
+for (var vi=0; vi<VARIANTS; vi++) heads.push(buildRoseHead(9871 + vi*7717));
+
+var roseSlots = [];         // {mesh, id, matrix base, delay}
+var perVariant = [];
+for (vi=0; vi<VARIANTS; vi++) perVariant.push([]);
+
+var R0 = rng(20250805);
+var up = new THREE.Vector3(0,1,0);
+var pts = [];
+
+for (var i=0; i<N_ROSES; i++){
+  // Fibonacci sobre semiesfera (evita patrón de cuadrícula)
+  var fy = 1 - (i/(N_ROSES-1)) * 1.16;               // 1 → -0.16 (falda irregular)
+  var rr = Math.sqrt(Math.max(0, 1 - fy*fy));
+  var th = i * GOLDEN;
+  var nx = Math.cos(th)*rr, nz = Math.sin(th)*rr, ny = fy;
+
+  // jitter para romper la regularidad
+  nx += (R0()-0.5)*0.055; nz += (R0()-0.5)*0.055; ny += (R0()-0.5)*0.035;
+  var l = Math.sqrt(nx*nx+ny*ny+nz*nz); nx/=l; ny/=l; nz/=l;
+
+  var px = nx*DOME_R, py = DOME_Y + ny*DOME_R*DOME_FLAT, pz = nz*DOME_R;
+
+  // normal del elipsoide → orienta hacia afuera, sesgada hacia arriba
+  var normal = new THREE.Vector3(nx/(DOME_R*DOME_R), ny/(DOME_R*DOME_R*DOME_FLAT*DOME_FLAT), nz/(DOME_R*DOME_R)).normalize();
+  pts.push({ pos:new THREE.Vector3(px,py,pz), nrm:normal, ny:ny });
+}
+
+// orden en cascada: del centro (arriba) hacia afuera
+var order = pts.map(function(p,ix){ return ix; }).sort(function(a,b){ return pts[b].ny - pts[a].ny; });
+var rank = new Array(N_ROSES);
+for (i=0;i<N_ROSES;i++) rank[order[i]] = i/(N_ROSES-1);
+
+var qHelp = new THREE.Quaternion(), mHelp = new THREE.Matrix4(), sHelp = new THREE.Vector3();
+
+for (i=0; i<N_ROSES; i++){
+  var p = pts[i];
+  var v = i % VARIANTS;
+  var scale = HEAD_R * (0.86 + R0()*0.30);              // ±15%
+  qHelp.setFromUnitVectors(up, p.nrm);
+  // giro aleatorio sobre el eje de la flor
+  var spin = new THREE.Quaternion().setFromAxisAngle(up, R0()*TAU);
+  var tiltJ = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(R0()-0.5, 0, R0()-0.5).normalize(), (R0()-0.5)*0.30);
+  qHelp.multiply(tiltJ).multiply(spin);
+
+  var mat = new THREE.Matrix4().compose(p.pos, qHelp, sHelp.set(scale,scale,scale));
+  // tono al azar (NO derivado del índice: eso agrupaba los colores por zona)
+  var tone = lin(ROSE_TONES[Math.floor(R0()*ROSE_TONES.length) % ROSE_TONES.length]).clone();
+  tone.multiplyScalar(0.86 + R0()*0.20);       // jitter de luminancia
+  tone.offsetHSL((R0()-0.5)*0.014, (R0()-0.5)*0.08, 0);   // jitter de matiz/saturación
+
+  perVariant[v].push({ matrix:mat, color:tone, delay:0.42 + rank[i]*1.45, scale:scale, pos:p.pos });
+}
+
+var roseMeshes = [];
+for (vi=0; vi<VARIANTS; vi++){
+  var list = perVariant[vi];
+  var im = new THREE.InstancedMesh(heads[vi], roseMat, list.length);
+  im.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  for (var n=0;n<list.length;n++){
+    im.setMatrixAt(n, list[n].matrix);
+    im.setColorAt(n, list[n].color);
+  }
+  im.instanceMatrix.needsUpdate = true;
+  if (im.instanceColor) im.instanceColor.needsUpdate = true;
+  im.frustumCulled = false;
+  domeGroup.add(im);
+  roseMeshes.push({ mesh:im, list:list });
+}
+
+/* relleno oscuro interior: elimina cualquier transparencia entre rosas.
+   Crece al final de la cascada: si aparece antes, se ve como un huevo pelado. */
+var fillMesh = null, FILL_SCALE = new THREE.Vector3();
+(function(){
+  var fill = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 20, 14),
+    new THREE.MeshStandardMaterial({ color:lin(0x7A4C4E), roughness:0.95, metalness:0 })
+  );
+  FILL_SCALE.set(DOME_R*0.86, DOME_R*DOME_FLAT*0.86, DOME_R*0.86);
+  fill.scale.copy(FILL_SCALE);
+  fill.position.y = DOME_Y;
+  domeGroup.add(fill);
+  fillMesh = fill;
+})();
+
+/* ── hojas: pocas, asomando ENTRE las rosas y en el borde del domo.
+      Van instanciadas para poder mecerlas una por una sin coste.
+      Ancladas siempre por encima del ala del papel: nunca lo atraviesan. ── */
+var leafGroup = new THREE.Group();
+bouquet.add(leafGroup);
+var leafInst = null, leafData = [];
+(function(){
+  var lg = leafGeometry();
+  var R1 = rng(4242);
+  var N_LEAF = 15;
+  var YAX = new THREE.Vector3(0,1,0);
+  var PAPER_RIM_Y = 0.15;      // punto más alto del ala ondulada del papel
+
+  for (var i=0;i<N_LEAF;i++){
+    var a = i*GOLDEN*1.7 + R1()*0.6;
+    // ny: altura sobre el domo (0 = ecuador, 1 = cima)
+    var atEdge = (i % 3 !== 0);
+    var ny = atEdge ? (0.14 + R1()*0.16) : (0.36 + R1()*0.34);
+    var rr = Math.sqrt(Math.max(0,1-ny*ny));
+    var rad = DOME_R * (atEdge ? 0.94 : 0.84);
+    var px = Math.cos(a)*rr*rad;
+    var pz = Math.sin(a)*rr*rad;
+    var py = DOME_Y + ny*DOME_R*DOME_FLAT;
+    if (py < PAPER_RIM_Y + 0.06) py = PAPER_RIM_Y + 0.06;   // margen de seguridad
+
+    // siempre hacia afuera Y hacia arriba: la punta jamás baja al plano del papel
+    var yBias = atEdge ? 0.62 : 1.50;
+    var out = new THREE.Vector3(px, Math.sqrt(px*px+pz*pz)*yBias, pz).normalize();
+    var q = new THREE.Quaternion().setFromUnitVectors(YAX, out);
+    q.multiply(new THREE.Quaternion().setFromAxisAngle(YAX, R1()*TAU));
+
+    var sc = (atEdge ? 0.245 : 0.195) * (0.82 + R1()*0.40);
+    leafData.push({
+      pos:new THREE.Vector3(px,py,pz), q:q,
+      scale:new THREE.Vector3(sc, sc*1.75, sc),
+      color:lin(LEAF_TONES[i % LEAF_TONES.length]).multiplyScalar(0.58+R1()*0.28),
+      phase:R1()*TAU, amp:0.055 + R1()*0.055, speed:0.55 + R1()*0.45
+    });
+  }
+
+  leafInst = new THREE.InstancedMesh(lg, new THREE.MeshStandardMaterial({
+    vertexColors:true, roughness:0.70, metalness:0, side:THREE.DoubleSide
+  }), N_LEAF);
+  leafInst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  leafInst.frustumCulled = false;
+  var m = new THREE.Matrix4();
+  for (i=0;i<N_LEAF;i++){
+    var d = leafData[i];
+    m.compose(d.pos, d.q, d.scale);
+    leafInst.setMatrixAt(i, m);
+    leafInst.setColorAt(i, d.color);
+  }
+  leafInst.instanceMatrix.needsUpdate = true;
+  if (leafInst.instanceColor) leafInst.instanceColor.needsUpdate = true;
+  leafGroup.add(leafInst);
+})();
+
+/* mecer las hojas: flexión suave en la base, cada una a su ritmo */
+var _lm = new THREE.Matrix4(), _lq = new THREE.Quaternion(), _lsw = new THREE.Quaternion();
+var XAX = new THREE.Vector3(1,0,0), ZAX = new THREE.Vector3(0,0,1);
+function swayLeaves(t){
+  if (!leafInst) return;
+  for (var i=0;i<leafData.length;i++){
+    var d = leafData[i];
+    var bend = Math.sin(t*d.speed + d.phase) * d.amp;
+    var twist = Math.cos(t*d.speed*0.73 + d.phase*1.4) * d.amp * 0.6;
+    _lsw.setFromAxisAngle(XAX, bend);
+    _lq.copy(d.q).multiply(_lsw);
+    _lsw.setFromAxisAngle(ZAX, twist);
+    _lq.multiply(_lsw);
+    _lm.compose(d.pos, _lq, d.scale);
+    leafInst.setMatrixAt(i, _lm);
+  }
+  leafInst.instanceMatrix.needsUpdate = true;
+}
+
+/* ── envoltorio de papel: dos capas con pliegues ── */
+var paperGroup = new THREE.Group();
+bouquet.add(paperGroup);
+(function(){
+  var outer = new THREE.Mesh(
+    paperGeometry({ rSeg:128, hSeg:22, rBot:0.13, rTop:1.58, yBot:-1.10, yTop:0.06,
+                    flare:1.05, amp:0.150, pleats:10, phase:0.0, rim:0.040, dark:0.46, rimDark:0.10 }),
+    new THREE.MeshStandardMaterial({
+      color:lin(PAPER_OUT), roughness:0.95, metalness:0, side:THREE.DoubleSide,
+      vertexColors:true, transparent:true, opacity:0.96
+    })
+  );
+  var inner = new THREE.Mesh(
+    paperGeometry({ rSeg:88, hSeg:18, rBot:0.11, rTop:1.46, yBot:-1.05, yTop:0.10,
+                    flare:1.10, amp:0.120, pleats:8,  phase:0.9, rim:0.035, dark:0.20, rimDark:0.68 }),
+    new THREE.MeshStandardMaterial({
+      color:lin(PAPER_IN), roughness:0.97, metalness:0, side:THREE.DoubleSide,
+      vertexColors:true
+    })
+  );
+  paperGroup.add(inner, outer);
+})();
+
+/* ── sombra de contacto: el domo proyecta sobre el papel ── */
+(function(){
+  var c=document.createElement('canvas'); c.width=c.height=128;
+  var x=c.getContext('2d');
+  var gr=x.createRadialGradient(64,64,0,64,64,64);
+  gr.addColorStop(0,   'rgba(74,40,44,0.62)');
+  gr.addColorStop(0.55,'rgba(84,48,52,0.34)');
+  gr.addColorStop(1,   'rgba(90,54,58,0)');
+  x.fillStyle=gr; x.fillRect(0,0,128,128);
+  var sh = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.30, 2.30),
+    new THREE.MeshBasicMaterial({ map:new THREE.CanvasTexture(c), transparent:true,
+                                  depthWrite:false, side:THREE.DoubleSide })
+  );
+  sh.rotation.x = -Math.PI/2;
+  sh.position.y = -0.12;
+  bouquet.add(sh);
+})();
+
+/* ── tallos: manojo que sale por debajo del cono ── */
+(function(){
+  var R3 = rng(31337), parts=[], m=new THREE.Matrix4(), q=new THREE.Quaternion();
+  var YAX = new THREE.Vector3(0,1,0);
+  var N = 15;
+  var stemGeo = new THREE.CylinderGeometry(0.030, 0.036, 1, 6, 1, false);
+  stemGeo.translate(0, 0.5, 0);                        // pivote arriba, cuerpo en +Y
+  for (var i=0;i<N;i++){
+    var a = (i/N)*TAU + R3()*0.5;
+    var r = 0.05 + R3()*0.075;
+    var top = new THREE.Vector3(Math.cos(a)*r, -0.95 + R3()*0.10, Math.sin(a)*r);
+    var len = 0.92 + R3()*0.42;
+    // se abren un poco hacia abajo, como un manojo cortado
+    var dir = new THREE.Vector3(Math.cos(a)*(0.16+R3()*0.20), -1, Math.sin(a)*(0.16+R3()*0.20)).normalize();
+    q.setFromUnitVectors(YAX, dir);
+    m.compose(top, q, new THREE.Vector3(1, len, 1));
+    var c = lin(0x8FA86A).multiplyScalar(0.62 + R3()*0.55);
+    parts.push({ geo:stemGeo, matrix:m.clone(), color:c });
+  }
+  var mesh = new THREE.Mesh(mergeGeos(parts), new THREE.MeshStandardMaterial({
+    vertexColors:true, roughness:0.86, metalness:0
+  }));
+  mesh.frustumCulled = false;
+  bouquet.add(mesh);
+})();
+
+/* ── listón satinado + colas ── */
+var ribbonGroup = new THREE.Group();
+bouquet.add(ribbonGroup);
+var tails = [];
+(function(){
+  var satin = new THREE.MeshStandardMaterial({
+    color:lin(RIBBON_COL), roughness:0.24, metalness:0.38, side:THREE.DoubleSide
+  });
+  var satinShaded = new THREE.MeshStandardMaterial({
+    color:lin(RIBBON_COL), roughness:0.24, metalness:0.38, side:THREE.DoubleSide,
+    vertexColors:true
+  });
+
+  // banda alrededor del papel (a la altura de la cintura del cono)
+  var band = new THREE.Mesh(new THREE.CylinderGeometry(0.605, 0.545, 0.22, 48, 1, true), satin);
+  band.position.y = -0.72;
+  ribbonGroup.add(band);
+
+  // dos bucles planos al frente, abiertos en V
+  var loopGeo = bowLoopGeometry(0.36, 0.34, 0.090, 0.12);
+  for (var s=-1; s<=1; s+=2){
+    var loop = new THREE.Mesh(loopGeo, satinShaded);
+    loop.position.set(0, -0.68, 0.62);
+    loop.rotation.z = s*2.30;          // abre el bucle hacia el costado
+    loop.rotation.y = s*0.34;          // y lo gira un poco hacia el frente
+    ribbonGroup.add(loop);
+  }
+  var knot = new THREE.Mesh(new THREE.SphereGeometry(0.062, 10, 8), satin);
+  knot.position.set(0, -0.68, 0.65);
+  knot.scale.set(1.5, 1.0, 0.75);
+  ribbonGroup.add(knot);
+
+  // colas onduladas (geometría actualizada por frame)
+  for (var k=0;k<2;k++){
+    var SEG=26;
+    var geo=new THREE.BufferGeometry();
+    var pos=new Float32Array((SEG+1)*2*3);
+    var idx=[];
+    for (var i=0;i<SEG;i++){
+      var a=i*2, b=a+2;
+      idx.push(a,b,a+1, a+1,b,b+1);
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    geo.setIndex(idx);
+    var mesh=new THREE.Mesh(geo, satin);
+    mesh.frustumCulled=false;
+    ribbonGroup.add(mesh);
+    tails.push({ mesh:mesh, geo:geo, SEG:SEG, side:(k===0?-1:1), phase:k*1.9 });
+  }
+})();
+
+function updateTails(t, grow){
+  for (var k=0;k<tails.length;k++){
+    var T=tails[k], pos=T.geo.attributes.position.array;
+    var x0 = T.side*0.12, y0 = -0.76, z0 = 0.60;
+    for (var i=0;i<=T.SEG;i++){
+      var s = i/T.SEG;
+      var len = 1.20 * grow;
+      var y = y0 - s*len;
+      var sway = REDUCED ? 0 : Math.sin(t*1.15 + T.phase + s*3.4)*0.11*s;
+      var x = x0 + T.side*(0.12 + 0.34*s*s) + sway;
+      var z = z0 - 0.18*s*s + Math.sin(t*0.85 + T.phase + s*2.6)*(REDUCED?0:0.08)*s;
+      // ancho del listón, con leve torsión
+      var w = 0.095 * (1 - 0.22*s);
+      var tw = Math.sin(s*3.1 + T.phase)*0.9;
+      var wx = Math.cos(tw)*w, wz = Math.sin(tw)*w;
+      var a=i*2*3, b=a+3;
+      pos[a]=x-wx; pos[a+1]=y; pos[a+2]=z-wz;
+      pos[b]=x+wx; pos[b+1]=y; pos[b+2]=z+wz;
+    }
+    T.geo.attributes.position.needsUpdate = true;
+    T.geo.computeVertexNormals();
+  }
+}
+
+/* ── partículas muy tenues ── */
+var dust;
+(function(){
+  var c=document.createElement('canvas'); c.width=c.height=64;
+  var x=c.getContext('2d');
+  var gr=x.createRadialGradient(32,32,0,32,32,32);
+  gr.addColorStop(0,'rgba(255,255,255,1)');
+  gr.addColorStop(0.35,'rgba(255,240,232,0.55)');
+  gr.addColorStop(1,'rgba(255,240,232,0)');
+  x.fillStyle=gr; x.fillRect(0,0,64,64);
+  var tex=new THREE.CanvasTexture(c);
+
+  var N=90, pos=new Float32Array(N*3), spd=new Float32Array(N);
+  var R2=rng(777);
+  for (var i=0;i<N;i++){
+    pos[i*3]   = (R2()-0.5)*11;
+    pos[i*3+1] = (R2()-0.5)*9;
+    pos[i*3+2] = (R2()-0.5)*7 - 1;
+    spd[i] = 0.020 + R2()*0.045;
+  }
+  var g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  dust = new THREE.Points(g, new THREE.PointsMaterial({
+    size:0.070, map:tex, transparent:true, opacity:0.26,
+    depthWrite:false, sizeAttenuation:true, color:0xFFFFFF
+  }));
+  dust.userData.spd = spd;
+  dust.frustumCulled = false;
+  scene.add(dust);
+})();
+
+/* ═══════════════ encuadre responsive ═══════════════ */
+/* Encuadre por caja (no por esfera): el ramo es ancho y bajo, así que
+   ajustar a una esfera desperdiciaba media pantalla en vertical.        */
+var HERO_W = 1.90;          // media anchura (domo + rosas del borde)
+var HERO_H = 1.50;          // media altura útil (sin las colas del listón)
+var HERO_CY = 0.38;         // centro vertical del ramo
+var camDist = 8, camTargetY = 0;
+
+function fit(){
+  var w=innerWidth, h=innerHeight;
+  camera.aspect = w/h;
+  var portrait = camera.aspect < 0.92;
+  var vHalf = THREE.MathUtils.degToRad(camera.fov)/2;
+  var hHalf = Math.atan(Math.tan(vHalf)*camera.aspect);
+
+  // en vertical dejamos que el papel sangre un pelín por los costados
+  var bleedW = portrait ? 1.00 : 1.08;
+  var vBudget = portrait ? 0.82 : 0.66;      // fracción de alto que puede ocupar
+
+  var distH = (HERO_W*bleedW)/Math.tan(hHalf);
+  var distV = HERO_H/(Math.tan(vHalf)*vBudget);
+  camDist = Math.max(distH, distV);
+
+  // subir el ramo en el encuadre para dejar la franja baja al texto
+  var worldHalfH = camDist*Math.tan(vHalf);
+  var shift = portrait ? 0.26 : 0.24;
+  camTargetY = HERO_CY - shift*worldHalfH;
+
+  camera.updateProjectionMatrix();
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(w,h);
+}
+fit();
+addEventListener('resize', fit);
+addEventListener('orientationchange', function(){ setTimeout(fit, 120); });
+
+/* ═══════════════ interacción ═══════════════ */
+var REST_Y = 0.0, REST_X = 0.0;
+var rotY = REST_Y, rotX = REST_X;
+var velY = 0, velX = 0;
+var dragging=false, lastX=0, lastY=0, lastT=0, moved=false, pid=null;
+
+var cvs = renderer.domElement;
+cvs.style.touchAction = 'none';
+
+cvs.addEventListener('pointerdown', function(e){
+  dragging=true; pid=e.pointerId;
+  lastX=e.clientX; lastY=e.clientY; lastT=performance.now();
+  velY=0; velX=0;
+  if (cvs.setPointerCapture) { try{ cvs.setPointerCapture(pid); }catch(err){} }
+});
+function onMove(e){
+  if (!dragging || (pid!==null && e.pointerId!==pid)) return;
+  var now=performance.now();
+  var dt=Math.max(8, now-lastT);
+  var dx=e.clientX-lastX, dy=e.clientY-lastY;
+  lastX=e.clientX; lastY=e.clientY; lastT=now;
+
+  rotY += dx*0.0085;
+  rotX = clamp(rotX + dy*0.0042, -0.42, 0.42);
+  // velocidad en rad/frame (normalizada a 60fps)
+  velY = (dx*0.0085) * (16.7/dt);
+  velX = (dy*0.0042) * (16.7/dt);
+  if (!moved && Math.abs(dx)>2){ moved=true; hideHint(); }
+}
+function onUp(e){
+  if (pid!==null && e && e.pointerId!==undefined && e.pointerId!==pid) return;
+  dragging=false; pid=null;
+  velY = clamp(velY, -0.09, 0.09);
+  velX = clamp(velX, -0.05, 0.05);
+}
+addEventListener('pointermove', onMove, {passive:true});
+addEventListener('pointerup', onUp);
+addEventListener('pointercancel', onUp);
+
+/* ═══════════════ secuencia de entrada ═══════════════ */
+var opened=false, t0=null, introDone=false;
+var INTRO_END = 3.5;
+
+function applyRoses(t){
+  var allDone = true;
+  var m = new THREE.Matrix4(), p=new THREE.Vector3(), q=new THREE.Quaternion(), s=new THREE.Vector3();
+  for (var v=0; v<roseMeshes.length; v++){
+    var rm = roseMeshes[v], list = rm.list, changed=false;
+    for (var n=0; n<list.length; n++){
+      var it = list[n];
+      var k = REDUCED ? 1 : clamp((t - it.delay)/0.62, 0, 1);
+      if (k < 1) allDone = false;
+      var g = k<=0 ? 0.0001 : easeOutBack(k);
+      if (it._last === g) continue;
+      it._last = g;
+      it.matrix.decompose(p,q,s);
+      m.compose(p, q, s.set(it.scale*g, it.scale*g, it.scale*g));
+      rm.mesh.setMatrixAt(n, m);
+      changed = true;
+    }
+    if (changed) rm.mesh.instanceMatrix.needsUpdate = true;
+  }
+  return allDone;
+}
+
+/* estado inicial: todo encogido */
+if (!REDUCED){
+  applyRoses(-1);
+  if (fillMesh) fillMesh.scale.setScalar(0.0001);
+  paperGroup.scale.setScalar(0.001);
+  leafGroup.scale.setScalar(0.001);
+  ribbonGroup.visible = false;
+} else {
+  applyRoses(999);
+  updateTails(0, 1);
+}
+
+/* ═══════════════ loop ═══════════════ */
+var clock = new THREE.Clock();
+var elapsed = 0;
+
+function frame(){
+  requestAnimationFrame(frame);
+  var dt = Math.min(clock.getDelta(), 0.05);
+  elapsed += dt;
+
+  var t = opened ? (elapsed - t0) : -1;
+
+  /* --- entrada orquestada --- */
+  if (opened && !introDone){
+    if (REDUCED){
+      paperGroup.scale.setScalar(1); leafGroup.scale.setScalar(1);
+      ribbonGroup.visible = true; ribbonGroup.scale.setScalar(1);
+      if (fillMesh) fillMesh.scale.copy(FILL_SCALE);
+      introDone = true;
+    } else {
+      var pk = clamp(t/0.95, 0, 1);
+      paperGroup.scale.setScalar(Math.max(0.001, easeOutBack(pk)));
+      var lk = clamp((t-0.95)/0.85, 0, 1);
+      leafGroup.scale.setScalar(Math.max(0.001, easeOutCubic(lk)));
+      var rk = clamp((t-0.90)/0.80, 0, 1);
+      ribbonGroup.visible = rk>0;
+      ribbonGroup.scale.setScalar(Math.max(0.001, easeOutBack(rk)));
+      var fk = clamp((t-1.75)/0.60, 0, 1);
+      if (fillMesh) fillMesh.scale.copy(FILL_SCALE).multiplyScalar(Math.max(0.0001, easeOutCubic(fk)));
+      var done = applyRoses(t);
+      if (done && t > INTRO_END) introDone = true;
+    }
+  }
+
+  /* --- cámara: se acerca suave --- */
+  var camK = REDUCED ? 1 : easeOutCubic(clamp((opened?t:0)/3.30, 0, 1));
+  var d = camDist * (1 + (1-camK)*0.30);
+  camera.position.set(0, HERO_CY + 1.20 + (1-camK)*0.55, d);
+  camera.lookAt(0, camTargetY, 0);
+
+  /* --- inercia + regreso lento al reposo --- */
+  if (!dragging){
+    // Todo en función del tiempo, no del frame: a 120Hz tiene que frenar
+    // exactamente igual que a 60Hz. f = cuántos "frames de 60fps" pasaron.
+    var f = dt*60;
+    rotY += velY*f; velY *= Math.pow(0.955, f);
+    rotX += velX*f; velX *= Math.pow(0.930, f);
+    // objetivo = reposo más cercano (no desenrolla vueltas enteras)
+    var restY = REST_Y + Math.round((rotY-REST_Y)/TAU)*TAU;
+    rotY += (restY - rotY) * (1 - Math.pow(1-0.0060, f));
+    rotX += (REST_X - rotX) * (1 - Math.pow(1-0.0130, f));
+    if (Math.abs(velY) < 1e-5) velY = 0;
+    if (Math.abs(velX) < 1e-5) velX = 0;
+  }
+  bouquet.rotation.y = rotY;
+  bouquet.rotation.x = rotX;
+
+  /* --- flotación sutil --- */
+  bouquet.position.y = -0.10 + (REDUCED ? 0 : Math.sin(elapsed*0.62)*0.045);
+
+  /* --- hojas: mecerse --- */
+  if (!REDUCED) swayLeaves(elapsed);
+
+  /* --- listón --- */
+  var grow = REDUCED ? 1 : clamp((t-1.05)/0.9, 0, 1);
+  if (grow > 0) updateTails(elapsed, Math.max(0.02, easeOutCubic(grow)));
+
+  /* --- polvo --- */
+  if (!REDUCED && dust){
+    var arr = dust.geometry.attributes.position.array, spd = dust.userData.spd;
+    for (var i=0;i<spd.length;i++){
+      arr[i*3+1] += spd[i]*dt;
+      if (arr[i*3+1] > 4.6) arr[i*3+1] = -4.6;
+    }
+    dust.geometry.attributes.position.needsUpdate = true;
+  }
+
+  renderer.render(scene, camera);
+}
+requestAnimationFrame(frame);
+
+/* ═══════════════ abrir ═══════════════ */
+var hint = document.getElementById('drag-hint');
+var hintOn = false;
+function hideHint(){ hint.classList.remove('in'); }
+
+document.getElementById('gate').addEventListener('click', function(){
+  this.classList.add('gone');
+  opened = true;
+  t0 = elapsed;
+  var noteAt = REDUCED ? 150 : 2650;
+  setTimeout(function(){ document.getElementById('note').classList.add('in'); }, noteAt);
+  setTimeout(function(){ if(!moved){ hint.classList.add('in'); hintOn=true; } }, REDUCED?600:3700);
+  setTimeout(function(){ if(hintOn) hideHint(); }, 11000);
+}, {once:true});
+
+/* ═══════════════ hook de depuración (inofensivo) ═══════════════ */
+window.__RAMO__ = {
+  open: function(){ var g=document.getElementById('gate'); if(g) g.click(); },
+  skipIntro: function(){
+    if (!opened){ this.open(); }
+    t0 = elapsed - 10; applyRoses(999); introDone=true;
+    paperGroup.scale.setScalar(1); leafGroup.scale.setScalar(1);
+    ribbonGroup.visible=true; ribbonGroup.scale.setScalar(1);
+    if (fillMesh) fillMesh.scale.copy(FILL_SCALE);
+    updateTails(elapsed,1);
+    document.getElementById('note').classList.add('in');
+  },
+  setRot: function(y,x){ rotY=y; rotX=x||0; velY=0; velX=0; },
+  rot: function(){ return { y:rotY, x:rotX, vy:velY }; },
+  info: function(){
+    return { calls:renderer.info.render.calls, tris:renderer.info.render.triangles,
+             geos:renderer.info.memory.geometries, dpr:renderer.getPixelRatio() };
+  },
+  freezeRest: function(){ REST_Y = rotY; }
+};
+
+})();
+</script>
+</body>
+</html>
