@@ -23,7 +23,15 @@ window.RAMO_TEXTO = {
   BOTON  : "Tocá para abrir",
 
   // Pista que aparece si no arrastrás
-  PISTA  : "Deslizá para girar el ramo"
+  PISTA  : "Deslizá para girar el ramo",
+
+  // ── Canción (opcional) ──────────────────────────────────────────
+  // Dejalo en "" si no querés música: no aparece ni el botón.
+  // Poné el archivo al lado del HTML y escribí acá su nombre.
+  // Arranca sola con el tap de "Tocá para abrir" (los navegadores
+  // no dejan sonar nada antes de que la persona toque la pantalla).
+  CANCION        : "",              // p. ej. "cancion.mp3"
+  CANCION_VOLUMEN: 0.55             // 0 a 1
 };
 </script>
 <!-- ══════════════════════════════════════════════════════════════════
@@ -171,6 +179,32 @@ canvas{display:block;width:100%;height:100%}
 }
 #drag-hint.in{opacity:.95}
 
+/* ───────── botón de sonido ─────────
+   Único elemento que recibe clics; el resto deja pasar el arrastre. */
+#snd{
+  position:fixed;z-index:12;
+  top:calc(14px + env(safe-area-inset-top));
+  right:calc(14px + env(safe-area-inset-right));
+  width:42px;height:42px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;
+  border:1px solid rgba(255,240,235,.22);
+  background:rgba(28,17,24,.52);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  color:#F3E4E0;cursor:pointer;padding:0;
+  opacity:0;transition:opacity .9s ease,background .25s ease,border-color .25s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+#snd.on{display:flex}
+#snd.in{opacity:.92}
+#snd:hover{background:rgba(40,25,34,.66);border-color:rgba(255,240,235,.34)}
+#snd:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#snd svg{width:19px;height:19px;fill:none;stroke:currentColor;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#snd .wave{opacity:1;transition:opacity .2s ease}
+#snd .slash{opacity:0;transition:opacity .2s ease}
+#snd.muted .wave{opacity:0}
+#snd.muted .slash{opacity:1}
+
 @media (prefers-reduced-motion: reduce){
   .mark{animation:none}
   #note{transition-duration:.35s}
@@ -184,6 +218,14 @@ canvas{display:block;width:100%;height:100%}
 <div id="scrim"></div>
 
 <div id="drag-hint" data-slot="PISTA"></div>
+
+<button id="snd" aria-label="Silenciar o activar la música" aria-pressed="false">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 9.5h3.2L12 5.6v12.8L7.2 14.5H4z"/>
+    <g class="wave"><path d="M15.6 9.4a3.8 3.8 0 0 1 0 5.2"/><path d="M18 7.2a7 7 0 0 1 0 9.6"/></g>
+    <g class="slash"><path d="M16.2 10.2l4.4 3.6"/><path d="M20.6 10.2l-4.4 3.6"/></g>
+  </svg>
+</button>
 
 <div id="note">
   <p class="eyebrow" data-slot="FECHA"></p>
@@ -207,6 +249,54 @@ canvas{display:block;width:100%;height:100%}
     if (typeof v === 'string') el.textContent = v.replace(/\{NOMBRE\}/g, T.NOMBRE || '');
   });
   document.title = (T.SALUDO || 'Feliz cumpleaños').replace(/,$/,'') + (T.NOMBRE ? ' ' + T.NOMBRE : '');
+})();
+
+/* Música. Vive fuera del bloque de Three.js para que suene aunque falle el 3D.
+   Arranca con el tap de la portada: es el gesto que los navegadores exigen
+   para permitir audio. Si no hay CANCION, no se crea nada ni aparece el botón. */
+(function(){
+  var T = window.RAMO_TEXTO || {};
+  var src = (T.CANCION || '').trim();
+  if (!src) return;
+
+  var btn = document.getElementById('snd');
+  var VOL = Math.max(0, Math.min(1, T.CANCION_VOLUMEN == null ? 0.55 : T.CANCION_VOLUMEN));
+  var audio = new Audio(src);
+  audio.loop = true; audio.preload = 'auto'; audio.volume = 0;
+  var muted = false, fadeId = 0;
+
+  function fadeTo(target, ms){
+    cancelAnimationFrame(fadeId);
+    var from = audio.volume, t0 = performance.now();
+    (function step(now){
+      var k = ms <= 0 ? 1 : Math.min(1, (now - t0)/ms);
+      audio.volume = Math.max(0, Math.min(1, from + (target - from)*k));
+      if (k < 1) fadeId = requestAnimationFrame(step);
+    })(performance.now());
+  }
+
+  function setMuted(m){
+    muted = m;
+    btn.classList.toggle('muted', m);
+    btn.setAttribute('aria-pressed', m ? 'true' : 'false');
+    if (m){ fadeTo(0, 420); }
+    else { var p = audio.play(); if (p && p.catch) p.catch(function(){}); fadeTo(VOL, 900); }
+  }
+
+  document.getElementById('gate').addEventListener('click', function(){
+    btn.classList.add('on');
+    setTimeout(function(){ btn.classList.add('in'); }, 20);
+    var p = audio.play();
+    // Si el navegador igual lo bloquea, dejamos el botón en silencio:
+    // un toque más y suena. Nunca se queda sin salida.
+    if (p && p.catch) p.catch(function(){ setMuted(true); });
+    fadeTo(VOL, 2200);
+  }, { once:true });
+
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    setMuted(!muted);
+  });
 })();
 </script>
 
