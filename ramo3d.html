@@ -19,7 +19,7 @@ window.RAMO_TEXTO = {
   FIRMA  : "— Nelson",
 
   // Pantalla inicial (antes de abrir)
-  PORTADA: "Algo para vos, {NOMBRE}",
+  PORTADA: "Happy Birthday!!!",
   BOTON  : "Tocá para abrir",
 
   // Pista que aparece si no arrastrás
@@ -1038,6 +1038,120 @@ var dust;
   scene.add(dust);
 })();
 
+/* ═══════════════ fuegos artificiales ═══════════════
+   Un solo THREE.Points con mezcla aditiva -> 1 draw call. Sobre fondo
+   oscuro el negro no se ve, así que "apagar" una chispa es llevarle el
+   color a cero. La posición se calcula de forma analítica desde la edad
+   de cada chispa (no se integra por frame): no acumula error y reiniciar
+   un estallido no cuesta nada. Van detrás del ramo, así el domo las tapa
+   y se leen como cielo de fondo.                                        */
+var FW_SLOTS = 7, FW_PER = 96, FW_N = FW_SLOTS*FW_PER;
+var FW_LAUNCH = 0.52, FW_LIFE = 2.25, FW_G = 1.60, FW_DRAG = 1.30;
+var FW_COLORS = [0xFFD98A, 0xF9E6C0, 0xFF9DA8, 0xFFF0DC, 0xFFA983, 0xFFC46B];
+var fwPoints=null, fwSlots=[], fwPos=null, fwCol=null, fwBase=null, fwVel=null;
+var fwQueue=[], fwRR=0, fwNextIdle=1e9;
+
+(function(){
+  var c=document.createElement('canvas'); c.width=c.height=64;
+  var x=c.getContext('2d');
+  var gr=x.createRadialGradient(32,32,0,32,32,32);
+  gr.addColorStop(0,   'rgba(255,255,255,1)');
+  gr.addColorStop(0.20,'rgba(255,246,228,0.88)');
+  gr.addColorStop(0.52,'rgba(255,212,152,0.26)');
+  gr.addColorStop(1,   'rgba(255,200,140,0)');
+  x.fillStyle=gr; x.fillRect(0,0,64,64);
+
+  fwPos=new Float32Array(FW_N*3); fwCol=new Float32Array(FW_N*3);
+  fwBase=new Float32Array(FW_N*3); fwVel=new Float32Array(FW_N*3);
+  var g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(fwPos,3));
+  g.setAttribute('color',    new THREE.BufferAttribute(fwCol,3));
+  fwPoints = new THREE.Points(g, new THREE.PointsMaterial({
+    size:0.195, map:new THREE.CanvasTexture(c), vertexColors:true,
+    transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
+    sizeAttenuation:true
+  }));
+  fwPoints.frustumCulled=false; fwPoints.visible=false;
+  scene.add(fwPoints);
+  for (var i=0;i<FW_SLOTS;i++) fwSlots.push({ t0:-99, live:false, ox:0, oy:0, oz:0 });
+})();
+
+var RFW = rng(90210);
+
+function fwLaunch(slot, t){
+  var s = fwSlots[slot];
+  s.t0=t; s.live=true;
+  s.ox = (RFW()-0.5)*4.0;
+  s.oy = 1.45 + RFW()*1.75;
+  s.oz = -3.1 + RFW()*2.2;                     // detrás del ramo
+  var base = lin(FW_COLORS[Math.floor(RFW()*FW_COLORS.length)]);
+  var alt  = lin(FW_COLORS[Math.floor(RFW()*FW_COLORS.length)]);
+  var spd  = 2.55 + RFW()*1.30;
+  for (var i=0;i<FW_PER;i++){
+    var n=(slot*FW_PER+i)*3;
+    // dirección uniforme sobre la esfera, con velocidades desparejas
+    var u=RFW()*2-1, th=RFW()*TAU, rr=Math.sqrt(Math.max(0,1-u*u));
+    var m = spd*(0.34 + 0.66*Math.pow(RFW(), 0.42));
+    fwVel[n]=Math.cos(th)*rr*m; fwVel[n+1]=u*m*0.92; fwVel[n+2]=Math.sin(th)*rr*m;
+    var c = (i%3===0) ? alt : base;
+    fwBase[n]=c.r; fwBase[n+1]=c.g; fwBase[n+2]=c.b;
+  }
+}
+
+function fwUpdate(t){
+  var any=false, i, n;
+  for (var s=0; s<FW_SLOTS; s++){
+    var sl=fwSlots[s];
+    if (!sl.live) continue;
+    var age = t - sl.t0;
+    if (age > FW_LAUNCH + FW_LIFE){
+      sl.live=false;
+      for (i=0;i<FW_PER;i++){ n=(s*FW_PER+i)*3; fwCol[n]=fwCol[n+1]=fwCol[n+2]=0; }
+      continue;
+    }
+    any=true;
+    if (age < FW_LAUNCH){
+      // cohete: estela corta subiendo hasta el punto de estallido
+      var k = age/FW_LAUNCH;
+      var ry = sl.oy - 2.7*(1-k)*(1-k);
+      for (i=0;i<FW_PER;i++){
+        n=(s*FW_PER+i)*3;
+        fwPos[n]=sl.ox; fwPos[n+2]=sl.oz;
+        if (i<12){
+          fwPos[n+1] = ry - i*0.058;
+          var b=(1-i/12)*0.80*(0.45+0.55*k);
+          fwCol[n]=fwBase[n]*b; fwCol[n+1]=fwBase[n+1]*b; fwCol[n+2]=fwBase[n+2]*b;
+        } else {
+          fwPos[n+1]=ry; fwCol[n]=fwCol[n+1]=fwCol[n+2]=0;
+        }
+      }
+    } else {
+      var a = age - FW_LAUNCH;
+      var damp = (1-Math.exp(-FW_DRAG*a))/FW_DRAG;      // rozamiento del aire
+      var fade = Math.pow(Math.max(0,1-a/FW_LIFE), 1.7);
+      var flash = a < 0.09 ? 1 + (1-a/0.09)*2.6 : 1;    // destello del estallido
+      for (i=0;i<FW_PER;i++){
+        n=(s*FW_PER+i)*3;
+        fwPos[n]   = sl.ox + fwVel[n]*damp;
+        fwPos[n+1] = sl.oy + fwVel[n+1]*damp - 0.5*FW_G*a*a;
+        fwPos[n+2] = sl.oz + fwVel[n+2]*damp;
+        var b = fade*flash*(0.72 + 0.28*Math.sin(a*26 + i*1.7));
+        fwCol[n]=fwBase[n]*b; fwCol[n+1]=fwBase[n+1]*b; fwCol[n+2]=fwBase[n+2]*b;
+      }
+    }
+  }
+  fwPoints.geometry.attributes.position.needsUpdate=true;
+  fwPoints.geometry.attributes.color.needsUpdate=true;
+  fwPoints.visible = any;
+}
+
+/* Salva al abrir; después, algún estallido suelto de vez en cuando. */
+function fwVolley(t){
+  var at=[0.10, 0.52, 1.00, 1.52, 2.10, 2.70, 3.30];
+  for (var i=0;i<at.length;i++) fwQueue.push(t+at[i]);
+  fwNextIdle = t + 9.0;
+}
+
 /* ═══════════════ encuadre responsive ═══════════════ */
 /* Encuadre por caja (no por esfera): el ramo es ancho y bajo, así que
    ajustar a una esfera desperdiciaba media pantalla en vertical.        */
@@ -1210,6 +1324,18 @@ function frame(){
   /* --- flotación sutil --- */
   bouquet.position.y = -0.10 + (REDUCED ? 0 : Math.sin(elapsed*0.62)*0.045);
 
+  /* --- fuegos artificiales --- */
+  if (!REDUCED && fwPoints){
+    while (fwQueue.length && elapsed >= fwQueue[0]){
+      fwQueue.shift(); fwLaunch(fwRR % FW_SLOTS, elapsed); fwRR++;
+    }
+    if (opened && elapsed > fwNextIdle){
+      fwLaunch(fwRR % FW_SLOTS, elapsed); fwRR++;
+      fwNextIdle = elapsed + 7 + RFW()*6;
+    }
+    fwUpdate(elapsed);
+  }
+
   /* --- hojas: mecerse --- */
   if (!REDUCED) swayLeaves(elapsed);
 
@@ -1240,6 +1366,7 @@ document.getElementById('gate').addEventListener('click', function(){
   this.classList.add('gone');
   opened = true;
   t0 = elapsed;
+  if (!REDUCED) fwVolley(elapsed);
   var noteAt = REDUCED ? 150 : 2650;
   setTimeout(function(){ document.getElementById('note').classList.add('in'); }, noteAt);
   setTimeout(function(){ if(!moved){ hint.classList.add('in'); hintOn=true; } }, REDUCED?600:3700);
@@ -1260,6 +1387,7 @@ window.__RAMO__ = {
   },
   setRot: function(y,x){ rotY=y; rotX=x||0; velY=0; velX=0; },
   rot: function(){ return { y:rotY, x:rotX, vy:velY }; },
+  fw: function(){ fwQueue.length=0; fwVolley(elapsed); },
   info: function(){
     return { calls:renderer.info.render.calls, tris:renderer.info.render.triangles,
              geos:renderer.info.memory.geometries, dpr:renderer.getPixelRatio() };
