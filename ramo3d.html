@@ -125,19 +125,66 @@ canvas{display:block;width:100%;height:100%}
 }
 #gate.gone{opacity:0;visibility:hidden;pointer-events:none}
 #gate:focus-visible{outline:2px solid var(--accent);outline-offset:-6px}
+/* halo tibio que respira detrás del contenido */
+#gate::before{
+  content:"";position:absolute;left:50%;top:50%;
+  width:min(74vw,460px);height:min(74vw,460px);
+  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,
+    rgba(255,186,128,.17) 0%, rgba(255,150,110,.07) 44%, rgba(255,150,110,0) 70%);
+  animation:halo 5.6s ease-in-out infinite;
+}
+@keyframes halo{
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.65}
+  50%    {transform:translate(-50%,-50%) scale(1.16);opacity:1}
+}
+
 .mark{
+  position:relative;
   width:30px;height:30px;border-radius:50%;
-  background:radial-gradient(circle at 34% 30%,#F0A48C,#D2624B 72%);
-  box-shadow:0 6px 20px rgba(210,98,75,.28);
+  background:radial-gradient(circle at 34% 30%,#FFCB9E,#D2624B 74%);
+  box-shadow:0 0 22px rgba(255,150,105,.45), 0 6px 20px rgba(210,98,75,.3);
   animation:pulse 2.8s ease-in-out infinite;
 }
-@keyframes pulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.16);opacity:.55}}
+/* ondas que salen del punto: dicen "tocá acá" sin escribirlo */
+.mark::before,.mark::after{
+  content:"";position:absolute;inset:-5px;border-radius:50%;
+  border:1px solid rgba(255,197,157,.6);
+  animation:ripple 2.9s cubic-bezier(.2,.6,.3,1) infinite;
+}
+.mark::after{animation-delay:1.45s}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(1.12);opacity:.6}}
+@keyframes ripple{
+  0%  {transform:scale(.7);opacity:.7}
+  70% {opacity:0}
+  100%{transform:scale(2.8);opacity:0}
+}
+
 .gate-text{
   font-family:'Fraunces',Georgia,serif;font-weight:300;
   font-size:clamp(1.35rem,6vw,2rem);text-align:center;line-height:1.3;
-  max-width:18ch;
+  max-width:18ch;color:#F7EADD;
 }
-.gate-hint{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+/* destello que barre el saludo. Con @supports para que, si el navegador
+   no recorta el fondo al texto, no quede el texto invisible. */
+@supports ((background-clip:text) or (-webkit-background-clip:text)){
+  .gate-text{
+    background:linear-gradient(100deg,
+      #F2E2D2 0%, #F2E2D2 36%, #FFF6E6 45%,
+      #FFD9A4 50%, #FFF6E6 55%, #F2E2D2 64%, #F2E2D2 100%);
+    background-size:300% 100%;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:sheen 5s ease-in-out infinite;
+  }
+}
+@keyframes sheen{0%{background-position:130% 0}58%,100%{background-position:-45% 0}}
+
+.gate-hint{
+  font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  animation:breathe 3.1s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
 
 /* ───────── texto sobre la escena ───────── */
 #note{
@@ -206,7 +253,9 @@ canvas{display:block;width:100%;height:100%}
 #snd.muted .slash{opacity:1}
 
 @media (prefers-reduced-motion: reduce){
-  .mark{animation:none}
+  .mark,.gate-text,.gate-hint,#gate::before{animation:none}
+  .mark::before,.mark::after{display:none}
+  .gate-hint{opacity:.85}
   #note{transition-duration:.35s}
   #gate{transition-duration:.35s}
 }
@@ -950,19 +999,27 @@ var tails = [];
   band.position.y = -0.72;
   ribbonGroup.add(band);
 
-  // dos bucles planos al frente, abiertos en V
-  var loopGeo = bowLoopGeometry(0.36, 0.34, 0.090, 0.12);
+  // Dos bucles planos al frente, abiertos en V.
+  // Van en un grupo INCLINADO con la pendiente del cono: los bucles suben
+  // 0.26 y a esa altura el papel ya es bastante más ancho, así que sin la
+  // inclinación la punta del bucle terminaba metida dentro del envoltorio.
+  var CONE_SLOPE = 0.90;               // rad, pendiente de la pared del cono
+  var bowGroup = new THREE.Group();
+  bowGroup.position.set(0, -0.72, 0.70);
+  bowGroup.rotation.x = CONE_SLOPE;
+  ribbonGroup.add(bowGroup);
+
+  var loopGeo = bowLoopGeometry(0.30, 0.27, 0.078, 0.10);
   for (var s=-1; s<=1; s+=2){
     var loop = new THREE.Mesh(loopGeo, satinShaded);
-    loop.position.set(0, -0.68, 0.73);
-    loop.rotation.z = s*2.30;          // abre el bucle hacia el costado
-    loop.rotation.y = s*0.34;          // y lo gira un poco hacia el frente
-    ribbonGroup.add(loop);
+    loop.rotation.z = s*2.36;          // abre el bucle hacia el costado
+    loop.rotation.y = s*0.20;
+    bowGroup.add(loop);
   }
-  var knot = new THREE.Mesh(new THREE.SphereGeometry(0.062, 10, 8), satin);
-  knot.position.set(0, -0.68, 0.76);
-  knot.scale.set(1.5, 1.0, 0.75);
-  ribbonGroup.add(knot);
+  var knot = new THREE.Mesh(new THREE.SphereGeometry(0.058, 10, 8), satin);
+  knot.position.set(0, 0, 0.035);
+  knot.scale.set(1.6, 1.0, 0.8);
+  bowGroup.add(knot);
 
   // colas onduladas (geometría actualizada por frame)
   for (var k=0;k<2;k++){
@@ -1060,9 +1117,9 @@ var FW_COLORS = [0xFFD98A, 0xFFF0DC, 0xFF9DA8, 0xFFC46B, 0xFF8E6B, 0xCFE6FF];
 
 /* tres tipos de carcasa */
 var FW_TYPES = [
-  { name:'peony',  spd:3.10, tight:0.86, life:2.10, g:1.55, drag:1.30, twinkle:0.24, trail:1.00 },
-  { name:'sauce',  spd:2.05, tight:0.90, life:3.10, g:2.70, drag:1.05, twinkle:0.14, trail:1.55 },
-  { name:'brillo', spd:2.70, tight:0.72, life:2.45, g:1.70, drag:1.25, twinkle:0.85, trail:0.80 }
+  { name:'peony',  rad:0.30, tight:0.86, life:2.10, g:1.55, drag:1.30, twinkle:0.24, trail:1.00 },
+  { name:'sauce',  rad:0.22, tight:0.90, life:3.10, g:2.70, drag:1.05, twinkle:0.14, trail:1.55 },
+  { name:'brillo', rad:0.26, tight:0.72, life:2.45, g:1.70, drag:1.25, twinkle:0.85, trail:0.80 }
 ];
 
 var fwPoints=null, fwSlots=[], fwPos=null, fwCol=null, fwBase=null, fwVel=null;
@@ -1085,7 +1142,7 @@ var fwQueue=[], fwRR=0, fwNextIdle=1e9;
   g.setAttribute('position', new THREE.BufferAttribute(fwPos,3));
   g.setAttribute('color',    new THREE.BufferAttribute(fwCol,3));
   fwPoints = new THREE.Points(g, new THREE.PointsMaterial({
-    size:0.155, map:new THREE.CanvasTexture(c), vertexColors:true,
+    size:0.175, map:new THREE.CanvasTexture(c), vertexColors:true,
     transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
     sizeAttenuation:true
   }));
@@ -1100,16 +1157,45 @@ function fwLaunch(slot, t){
   var s = fwSlots[slot];
   var ty = FW_TYPES[Math.floor(RFW()*FW_TYPES.length)];
   s.t0=t; s.live=true; s.ty=ty;
-  s.ox = (RFW()-0.5)*4.6;
-  s.oy = 1.35 + RFW()*2.10;
-  s.oz = -3.4 + RFW()*2.4;                      // detrás del ramo
+  // Se elige DÓNDE SE VA A VER y recién después se lleva a coordenadas de
+  // mundo. Los estallidos van en un anillo alrededor del ramo, sesgado
+  // hacia arriba: en vertical eso los pone sobre el domo, y en apaisado
+  // —donde el ramo llega casi al borde de arriba— se corren solos a los
+  // costados. Todo acotado para que el casco entero entre en cuadro.
+  s.oz = -2.7 + RFW()*1.8;                      // detrás del ramo
+  var vHalf = THREE.MathUtils.degToRad(camera.fov)/2;
+  var dz = camera.position.z - s.oz;
+  var hh = dz*Math.tan(vHalf);                  // media altura visible a esa profundidad
+  var hh0 = camera.position.z*Math.tan(vHalf);  // ídem en el plano del ramo
+
+  // huella del domo en pantalla (NDC)
+  var domeCY = (DOME_Y - camTargetY)/hh0;
+  var domeRY = (DOME_R*DOME_FLAT + HEAD_R)/hh0;
+  var domeRX = (DOME_R + HEAD_R)/(hh0*camera.aspect);
+
+  var ang = -0.32*Math.PI + RFW()*1.64*Math.PI; // 296° del círculo, sesgado arriba
+  var lim = 0.92 - ty.rad;                      // margen para que no se recorte
+  var ndcX = Math.cos(ang)*(domeRX + ty.rad*0.55 + RFW()*0.22);
+  var ndcY = domeCY + Math.sin(ang)*(domeRY + ty.rad*0.60 + RFW()*0.22);
+  ndcX = clamp(ndcX, -lim, lim);
+  ndcY = clamp(ndcY, -lim, lim);
+
+  // NDC -> mundo a la profundidad elegida
+  var axisY = camera.position.y + (camTargetY - camera.position.y)*(dz/camera.position.z);
+  s.ox = ndcX*hh*camera.aspect;
+  s.oy = axisY + ndcY*hh;
+
+  s.rise = hh*0.55;                             // altura del ascenso del cohete
+  var targetR = hh*ty.rad;                      // radio del casco en unidades de mundo
+  var spd = targetR*ty.drag;                    // desplazamiento máximo = spd/drag
+
   var base = lin(FW_COLORS[Math.floor(RFW()*FW_COLORS.length)]);
   var alt  = lin(FW_COLORS[Math.floor(RFW()*FW_COLORS.length)]);
   for (var i=0;i<FW_SPARKS;i++){
     var n=(slot*FW_SPARKS+i)*3;
     // dirección uniforme sobre la esfera; magnitud casi constante
     var u=RFW()*2-1, th=RFW()*TAU, rr=Math.sqrt(Math.max(0,1-u*u));
-    var m = ty.spd * (ty.tight + (1-ty.tight)*RFW());
+    var m = spd * (ty.tight + (1-ty.tight)*RFW());
     fwVel[n]=Math.cos(th)*rr*m; fwVel[n+1]=u*m*0.94; fwVel[n+2]=Math.sin(th)*rr*m;
     var c = (i%4===0) ? alt : base;
     fwBase[n]=c.r; fwBase[n+1]=c.g; fwBase[n+2]=c.b;
@@ -1133,7 +1219,7 @@ function fwUpdate(t){
       // cohete: estela corta subiendo. Separación fija: si se acorta al
       // llegar, las chispas se superponen y en aditivo saturan a blanco.
       var k = age/FW_LAUNCH;
-      var ry = sl.oy - 2.8*(1-k)*(1-k);
+      var ry = sl.oy - (sl.rise||2.8)*(1-k)*(1-k);
       for (i=0;i<FW_SPARKS;i++){
         sp=(s*FW_SPARKS+i)*3;
         for (j=0;j<FW_TRAIL;j++){
@@ -1426,6 +1512,8 @@ window.__RAMO__ = {
   setRot: function(y,x){ rotY=y; rotX=x||0; velY=0; velX=0; },
   rot: function(){ return { y:rotY, x:rotX, vy:velY }; },
   fw: function(){ fwQueue.length=0; fwVolley(elapsed); },
+  fwSeek: function(d){ for (var i=0;i<fwSlots.length;i++) fwSlots[i].t0 -= d;
+                       for (i=0;i<fwQueue.length;i++) fwQueue[i] -= d; },
   info: function(){
     return { calls:renderer.info.render.calls, tris:renderer.info.render.triangles,
              geos:renderer.info.memory.geometries, dpr:renderer.getPixelRatio() };
