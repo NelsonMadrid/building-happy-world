@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1A1016">
+<meta name="theme-color" content="#0C1729">
 <title>Feliz cumpleaños</title>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -48,7 +48,7 @@ window.RAMO_TEXTO = {
   --ink-soft:#E4D2CD;
   --accent:#E8907A;
   --muted:#BCA3AC;
-  --bg-deep:#1A1016;
+  --bg-deep:#0C1729;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -57,10 +57,10 @@ body{
   font-family:'Karla',system-ui,-apple-system,sans-serif;
   color:var(--ink);
   background:
-    radial-gradient(105% 52% at 50% 104%, #5A2733 0%, rgba(90,39,51,0) 60%),
-    radial-gradient(88% 62% at 16% -4%,  #3B2436 0%, rgba(59,36,54,0) 58%),
-    radial-gradient(78% 52% at 92% 6%,   #4A2733 0%, rgba(74,39,51,0) 54%),
-    linear-gradient(168deg,#241621 0%,#2E1B26 46%,#150D13 100%);
+    radial-gradient(105% 52% at 50% 104%, #24486E 0%, rgba(36,72,110,0) 60%),
+    radial-gradient(88% 62% at 16% -4%,  #172C4E 0%, rgba(23,44,78,0) 58%),
+    radial-gradient(78% 52% at 92% 6%,   #1E3A63 0%, rgba(30,58,99,0) 54%),
+    linear-gradient(168deg,#0C1729 0%,#122442 46%,#050A13 100%);
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
   touch-action:none;
@@ -80,23 +80,23 @@ canvas{display:block;width:100%;height:100%}
     /* banda superior: la pista de arrastre necesita fondo propio,
        el resplandor del ramo llegaba hasta arriba y la dejaba en 3.3:1 */
     linear-gradient(to bottom,
-      rgba(14,8,12,.78) 0%,
-      rgba(16,10,14,.42) 7%,
-      rgba(18,11,16,.12) 12%,
-      rgba(18,11,16,0)   17%),
+      rgba(5,9,17,.78) 0%,
+      rgba(6,11,20,.42) 7%,
+      rgba(7,12,22,.12) 12%,
+      rgba(7,12,22,0)   17%),
     /* degradado oscuro desde abajo, detrás del bloque de texto */
     linear-gradient(to top,
-      rgba(15,9,13,.978) 0%,
-      rgba(16,10,14,.955) 16%,
-      rgba(18,11,16,.875) 27%,
-      rgba(20,12,18,.62) 38%,
-      rgba(22,13,20,.26) 48%,
-      rgba(22,13,20,0)   58%),
+      rgba(4,8,15,.978) 0%,
+      rgba(5,9,17,.955) 16%,
+      rgba(6,11,20,.875) 27%,
+      rgba(7,12,22,.62) 38%,
+      rgba(8,14,25,.26) 48%,
+      rgba(8,14,25,0)   58%),
     /* viñeta radial: oscurece las esquinas y enfoca el ramo */
     radial-gradient(76% 60% at 50% 38%,
-      rgba(8,4,8,0)    36%,
-      rgba(8,4,8,.26)  74%,
-      rgba(5,2,5,.50) 100%);
+      rgba(3,6,12,0)    36%,
+      rgba(3,6,12,.26)  74%,
+      rgba(2,4,9,.50) 100%);
 }
 /* refuerzo local: halo oscuro justo detrás del texto */
 #scrim::after{
@@ -104,9 +104,9 @@ canvas{display:block;width:100%;height:100%}
   width:min(760px,132vw);height:min(58vh,430px);
   transform:translateX(-50%);
   background:radial-gradient(58% 76% at 50% 88%,
-    rgba(12,7,11,.88) 0%,
-    rgba(13,8,12,.55) 44%,
-    rgba(13,8,12,0) 74%);
+    rgba(4,8,15,.88) 0%,
+    rgba(5,9,17,.55) 44%,
+    rgba(5,9,17,0) 74%);
 }
 
 /* ───────── pantalla inicial ───────── */
@@ -114,10 +114,10 @@ canvas{display:block;width:100%;height:100%}
   position:fixed;inset:0;z-index:20;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
   background:
-    radial-gradient(105% 52% at 50% 104%, #5A2733 0%, rgba(90,39,51,0) 60%),
-    radial-gradient(88% 62% at 16% -4%,  #3B2436 0%, rgba(59,36,54,0) 58%),
-    radial-gradient(78% 52% at 92% 6%,   #4A2733 0%, rgba(74,39,51,0) 54%),
-    linear-gradient(168deg,#241621 0%,#2E1B26 46%,#150D13 100%);
+    radial-gradient(105% 52% at 50% 104%, #24486E 0%, rgba(36,72,110,0) 60%),
+    radial-gradient(88% 62% at 16% -4%,  #172C4E 0%, rgba(23,44,78,0) 58%),
+    radial-gradient(78% 52% at 92% 6%,   #1E3A63 0%, rgba(30,58,99,0) 54%),
+    linear-gradient(168deg,#0C1729 0%,#122442 46%,#050A13 100%);
   border:0;width:100%;font-family:inherit;color:inherit;cursor:pointer;
   padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
   transition:opacity .9s ease,visibility .9s;
@@ -188,7 +188,7 @@ canvas{display:block;width:100%;height:100%}
   width:42px;height:42px;border-radius:50%;
   display:none;align-items:center;justify-content:center;
   border:1px solid rgba(255,240,235,.22);
-  background:rgba(28,17,24,.52);
+  background:rgba(14,26,45,.52);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   color:#F3E4E0;cursor:pointer;padding:0;
   opacity:0;transition:opacity .9s ease,background .25s ease,border-color .25s ease;
@@ -196,7 +196,7 @@ canvas{display:block;width:100%;height:100%}
 }
 #snd.on{display:flex}
 #snd.in{opacity:.92}
-#snd:hover{background:rgba(40,25,34,.66);border-color:rgba(255,240,235,.34)}
+#snd:hover{background:rgba(22,38,64,.66);border-color:rgba(255,240,235,.34)}
 #snd:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #snd svg{width:19px;height:19px;fill:none;stroke:currentColor;
   stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -649,7 +649,7 @@ renderer.toneMappingExposure = 1.02;
 wrap.appendChild(renderer.domElement);
 
 /* ── iluminación cálida de estudio ── */
-scene.add(new THREE.HemisphereLight(0xFFE8D2, 0x2A1620, 0.55));      // fill suave
+scene.add(new THREE.HemisphereLight(0xFFE8D2, 0x16243D, 0.55));      // fill suave
 var key = new THREE.DirectionalLight(0xFFEFD8, 2.05);                // key cálida
 key.position.set(3.4, 6.0, 4.6); scene.add(key);
 var rimPink = new THREE.DirectionalLight(0xFF6E9E, 2.30);            // rim rosada detrás
@@ -1040,14 +1040,31 @@ var dust;
 
 /* ═══════════════ fuegos artificiales ═══════════════
    Un solo THREE.Points con mezcla aditiva -> 1 draw call. Sobre fondo
-   oscuro el negro no se ve, así que "apagar" una chispa es llevarle el
-   color a cero. La posición se calcula de forma analítica desde la edad
-   de cada chispa (no se integra por frame): no acumula error y reiniciar
-   un estallido no cuesta nada. Van detrás del ramo, así el domo las tapa
-   y se leen como cielo de fondo.                                        */
-var FW_SLOTS = 7, FW_PER = 96, FW_N = FW_SLOTS*FW_PER;
-var FW_LAUNCH = 0.52, FW_LIFE = 2.25, FW_G = 1.60, FW_DRAG = 1.30;
-var FW_COLORS = [0xFFD98A, 0xF9E6C0, 0xFF9DA8, 0xFFF0DC, 0xFFA983, 0xFFC46B];
+   oscuro el negro no se ve, así que apagar una chispa es llevarle el
+   color a cero.
+
+   La posición sale de una fórmula cerrada sobre la EDAD de cada chispa
+   (velocidad amortiguada + gravedad), no de integrar por frame. Eso da
+   dos cosas gratis: no acumula error, y evaluar la misma chispa un poco
+   antes en el tiempo cuesta lo mismo -> de ahí salen las estelas, que
+   son la misma chispa dibujada en 4 instantes seguidos.
+
+   Realismo: las estrellas de una carcasa real salen casi todas a la
+   misma velocidad (son la pared del proyectil), así que forman una
+   esfera nítida que se expande, no una nube difusa. Además se enfrían
+   de dorado a naranja a rojo mientras se apagan.                       */
+var FW_SLOTS = 10, FW_SPARKS = 72, FW_TRAIL = 4;
+var FW_N = FW_SLOTS*FW_SPARKS*FW_TRAIL;
+var FW_LAUNCH = 0.50, FW_TRAIL_DT = 0.034;
+var FW_COLORS = [0xFFD98A, 0xFFF0DC, 0xFF9DA8, 0xFFC46B, 0xFF8E6B, 0xCFE6FF];
+
+/* tres tipos de carcasa */
+var FW_TYPES = [
+  { name:'peony',  spd:3.10, tight:0.86, life:2.10, g:1.55, drag:1.30, twinkle:0.24, trail:1.00 },
+  { name:'sauce',  spd:2.05, tight:0.90, life:3.10, g:2.70, drag:1.05, twinkle:0.14, trail:1.55 },
+  { name:'brillo', spd:2.70, tight:0.72, life:2.45, g:1.70, drag:1.25, twinkle:0.85, trail:0.80 }
+];
+
 var fwPoints=null, fwSlots=[], fwPos=null, fwCol=null, fwBase=null, fwVel=null;
 var fwQueue=[], fwRR=0, fwNextIdle=1e9;
 
@@ -1056,87 +1073,108 @@ var fwQueue=[], fwRR=0, fwNextIdle=1e9;
   var x=c.getContext('2d');
   var gr=x.createRadialGradient(32,32,0,32,32,32);
   gr.addColorStop(0,   'rgba(255,255,255,1)');
-  gr.addColorStop(0.20,'rgba(255,246,228,0.88)');
-  gr.addColorStop(0.52,'rgba(255,212,152,0.26)');
+  gr.addColorStop(0.18,'rgba(255,248,232,0.92)');
+  gr.addColorStop(0.48,'rgba(255,214,158,0.28)');
   gr.addColorStop(1,   'rgba(255,200,140,0)');
   x.fillStyle=gr; x.fillRect(0,0,64,64);
 
   fwPos=new Float32Array(FW_N*3); fwCol=new Float32Array(FW_N*3);
-  fwBase=new Float32Array(FW_N*3); fwVel=new Float32Array(FW_N*3);
+  fwBase=new Float32Array(FW_SLOTS*FW_SPARKS*3);       // color por chispa
+  fwVel =new Float32Array(FW_SLOTS*FW_SPARKS*3);
   var g=new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(fwPos,3));
   g.setAttribute('color',    new THREE.BufferAttribute(fwCol,3));
   fwPoints = new THREE.Points(g, new THREE.PointsMaterial({
-    size:0.195, map:new THREE.CanvasTexture(c), vertexColors:true,
+    size:0.155, map:new THREE.CanvasTexture(c), vertexColors:true,
     transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
     sizeAttenuation:true
   }));
   fwPoints.frustumCulled=false; fwPoints.visible=false;
   scene.add(fwPoints);
-  for (var i=0;i<FW_SLOTS;i++) fwSlots.push({ t0:-99, live:false, ox:0, oy:0, oz:0 });
+  for (var i=0;i<FW_SLOTS;i++) fwSlots.push({ t0:-99, live:false, ox:0, oy:0, oz:0, ty:FW_TYPES[0] });
 })();
 
 var RFW = rng(90210);
 
 function fwLaunch(slot, t){
   var s = fwSlots[slot];
-  s.t0=t; s.live=true;
-  s.ox = (RFW()-0.5)*4.0;
-  s.oy = 1.45 + RFW()*1.75;
-  s.oz = -3.1 + RFW()*2.2;                     // detrás del ramo
+  var ty = FW_TYPES[Math.floor(RFW()*FW_TYPES.length)];
+  s.t0=t; s.live=true; s.ty=ty;
+  s.ox = (RFW()-0.5)*4.6;
+  s.oy = 1.35 + RFW()*2.10;
+  s.oz = -3.4 + RFW()*2.4;                      // detrás del ramo
   var base = lin(FW_COLORS[Math.floor(RFW()*FW_COLORS.length)]);
   var alt  = lin(FW_COLORS[Math.floor(RFW()*FW_COLORS.length)]);
-  var spd  = 2.55 + RFW()*1.30;
-  for (var i=0;i<FW_PER;i++){
-    var n=(slot*FW_PER+i)*3;
-    // dirección uniforme sobre la esfera, con velocidades desparejas
+  for (var i=0;i<FW_SPARKS;i++){
+    var n=(slot*FW_SPARKS+i)*3;
+    // dirección uniforme sobre la esfera; magnitud casi constante
     var u=RFW()*2-1, th=RFW()*TAU, rr=Math.sqrt(Math.max(0,1-u*u));
-    var m = spd*(0.34 + 0.66*Math.pow(RFW(), 0.42));
-    fwVel[n]=Math.cos(th)*rr*m; fwVel[n+1]=u*m*0.92; fwVel[n+2]=Math.sin(th)*rr*m;
-    var c = (i%3===0) ? alt : base;
+    var m = ty.spd * (ty.tight + (1-ty.tight)*RFW());
+    fwVel[n]=Math.cos(th)*rr*m; fwVel[n+1]=u*m*0.94; fwVel[n+2]=Math.sin(th)*rr*m;
+    var c = (i%4===0) ? alt : base;
     fwBase[n]=c.r; fwBase[n+1]=c.g; fwBase[n+2]=c.b;
   }
 }
 
 function fwUpdate(t){
-  var any=false, i, n;
+  var any=false, i, j, sp, n, q;
   for (var s=0; s<FW_SLOTS; s++){
-    var sl=fwSlots[s];
+    var sl=fwSlots[s], ty=sl.ty;
     if (!sl.live) continue;
     var age = t - sl.t0;
-    if (age > FW_LAUNCH + FW_LIFE){
+    if (age > FW_LAUNCH + ty.life){
       sl.live=false;
-      for (i=0;i<FW_PER;i++){ n=(s*FW_PER+i)*3; fwCol[n]=fwCol[n+1]=fwCol[n+2]=0; }
+      for (i=0;i<FW_SPARKS*FW_TRAIL;i++){ q=(s*FW_SPARKS*FW_TRAIL+i)*3; fwCol[q]=fwCol[q+1]=fwCol[q+2]=0; }
       continue;
     }
     any=true;
+
     if (age < FW_LAUNCH){
-      // cohete: estela corta subiendo hasta el punto de estallido
+      // cohete: estela corta subiendo. Separación fija: si se acorta al
+      // llegar, las chispas se superponen y en aditivo saturan a blanco.
       var k = age/FW_LAUNCH;
-      var ry = sl.oy - 2.7*(1-k)*(1-k);
-      for (i=0;i<FW_PER;i++){
-        n=(s*FW_PER+i)*3;
-        fwPos[n]=sl.ox; fwPos[n+2]=sl.oz;
-        if (i<12){
-          fwPos[n+1] = ry - i*0.058;
-          var b=(1-i/12)*0.80*(0.45+0.55*k);
-          fwCol[n]=fwBase[n]*b; fwCol[n+1]=fwBase[n+1]*b; fwCol[n+2]=fwBase[n+2]*b;
-        } else {
-          fwPos[n+1]=ry; fwCol[n]=fwCol[n+1]=fwCol[n+2]=0;
+      var ry = sl.oy - 2.8*(1-k)*(1-k);
+      for (i=0;i<FW_SPARKS;i++){
+        sp=(s*FW_SPARKS+i)*3;
+        for (j=0;j<FW_TRAIL;j++){
+          q=((s*FW_SPARKS+i)*FW_TRAIL+j)*3;
+          var idx = i*FW_TRAIL+j;
+          fwPos[q]=sl.ox; fwPos[q+2]=sl.oz;
+          if (idx < 14){
+            fwPos[q+1] = ry - idx*0.055;
+            var b=(1-idx/14)*0.78*(0.45+0.55*k);
+            fwCol[q]=fwBase[sp]*b; fwCol[q+1]=fwBase[sp+1]*b; fwCol[q+2]=fwBase[sp+2]*b;
+          } else {
+            fwPos[q+1]=ry; fwCol[q]=fwCol[q+1]=fwCol[q+2]=0;
+          }
         }
       }
-    } else {
-      var a = age - FW_LAUNCH;
-      var damp = (1-Math.exp(-FW_DRAG*a))/FW_DRAG;      // rozamiento del aire
-      var fade = Math.pow(Math.max(0,1-a/FW_LIFE), 1.7);
-      var flash = a < 0.09 ? 1 + (1-a/0.09)*2.6 : 1;    // destello del estallido
-      for (i=0;i<FW_PER;i++){
-        n=(s*FW_PER+i)*3;
-        fwPos[n]   = sl.ox + fwVel[n]*damp;
-        fwPos[n+1] = sl.oy + fwVel[n+1]*damp - 0.5*FW_G*a*a;
-        fwPos[n+2] = sl.oz + fwVel[n+2]*damp;
-        var b = fade*flash*(0.72 + 0.28*Math.sin(a*26 + i*1.7));
-        fwCol[n]=fwBase[n]*b; fwCol[n+1]=fwBase[n+1]*b; fwCol[n+2]=fwBase[n+2]*b;
+      continue;
+    }
+
+    var a = age - FW_LAUNCH;
+    var pl = a/ty.life;                              // 0..1 de vida
+    var fade = Math.pow(Math.max(0,1-pl), 1.65);
+    var flash = a < 0.08 ? 1 + (1-a/0.08)*2.8 : 1;   // destello del estallido
+    // enfriamiento: dorado -> naranja -> rojo al apagarse
+    var cg = 1 - 0.42*pl, cb = 1 - 0.82*pl;
+
+    for (i=0;i<FW_SPARKS;i++){
+      sp=(s*FW_SPARKS+i)*3;
+      var tw = ty.twinkle > 0.5
+        ? (Math.sin(a*34 + i*2.3) > -0.15 ? 1 : 0.18)          // centelleo duro
+        : (1 - ty.twinkle) + ty.twinkle*(0.5+0.5*Math.sin(a*22 + i*1.7));
+      for (j=0;j<FW_TRAIL;j++){
+        q=((s*FW_SPARKS+i)*FW_TRAIL+j)*3;
+        var aj = a - j*FW_TRAIL_DT*ty.trail;         // la misma chispa, antes
+        if (aj <= 0){ fwPos[q]=sl.ox; fwPos[q+1]=sl.oy; fwPos[q+2]=sl.oz;
+                      fwCol[q]=fwCol[q+1]=fwCol[q+2]=0; continue; }
+        var damp=(1-Math.exp(-ty.drag*aj))/ty.drag;
+        fwPos[q]   = sl.ox + fwVel[sp]*damp;
+        fwPos[q+1] = sl.oy + fwVel[sp+1]*damp - 0.5*ty.g*aj*aj;
+        fwPos[q+2] = sl.oz + fwVel[sp+2]*damp;
+        var b = fade*flash*tw*Math.pow(1 - j/FW_TRAIL, 1.5);
+        fwCol[q]=fwBase[sp]*b; fwCol[q+1]=fwBase[sp+1]*b*cg; fwCol[q+2]=fwBase[sp+2]*b*cb;
       }
     }
   }
@@ -1145,11 +1183,11 @@ function fwUpdate(t){
   fwPoints.visible = any;
 }
 
-/* Salva al abrir; después, algún estallido suelto de vez en cuando. */
+/* Salva al abrir; después, estallidos sueltos seguidos. */
 function fwVolley(t){
-  var at=[0.10, 0.52, 1.00, 1.52, 2.10, 2.70, 3.30];
+  var at=[0.08,0.42,0.80,1.15,1.55,1.95,2.35,2.80,3.25,3.70,4.20,4.70];
   for (var i=0;i<at.length;i++) fwQueue.push(t+at[i]);
-  fwNextIdle = t + 9.0;
+  fwNextIdle = t + 5.6;
 }
 
 /* ═══════════════ encuadre responsive ═══════════════ */
@@ -1331,7 +1369,7 @@ function frame(){
     }
     if (opened && elapsed > fwNextIdle){
       fwLaunch(fwRR % FW_SLOTS, elapsed); fwRR++;
-      fwNextIdle = elapsed + 7 + RFW()*6;
+      fwNextIdle = elapsed + 3.2 + RFW()*3.4;
     }
     fwUpdate(elapsed);
   }
