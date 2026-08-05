@@ -13,10 +13,10 @@
 <script>
 window.RAMO_TEXTO = {
   NOMBRE : "Anahela",
-  FECHA  : "5 de agosto",
-  SALUDO : "Feliz cumpleaños,",
-  MENSAJE: "Que Dios te cumpla todos los deseos de tu corazón y que pases un día increíble con los que más quieres.",
-  FIRMA  : "— Edgardo",
+  FECHA  : "5 de agosto 🎂",
+  SALUDO : "¡Feliz cumpleaños!",
+  MENSAJE: "¡Que Dios te cumpla todos los deseos de tu corazón y que pases un día increíble con los que más quieres! 🎉",
+  FIRMA  : "— Edgardo 💛",
 
   // Pantalla inicial (antes de abrir)
   PORTADA: "Happy Birthday!!!",
@@ -56,16 +56,49 @@ html,body{height:100%;overflow:hidden}
 body{
   font-family:'Karla',system-ui,-apple-system,sans-serif;
   color:var(--ink);
-  background:
-    radial-gradient(105% 52% at 50% 104%, #24486E 0%, rgba(36,72,110,0) 60%),
-    radial-gradient(88% 62% at 16% -4%,  #172C4E 0%, rgba(23,44,78,0) 58%),
-    radial-gradient(78% 52% at 92% 6%,   #1E3A63 0%, rgba(30,58,99,0) 54%),
-    linear-gradient(168deg,#0C1729 0%,#122442 46%,#050A13 100%);
+  background:#0A1524;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
   touch-action:none;
   overscroll-behavior:none;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   ▼▼▼  PALETA DE FONDO — cambiá estos 4 degradados a gusto  ▼▼▼
+   Cuatro "licores" oscuros que se van fundiendo entre sí. No se
+   interpolan degradados (los navegadores no lo hacen bien): son cuatro
+   capas superpuestas que se cruzan por opacidad, que además es lo único
+   que la GPU compone gratis.
+   ══════════════════════════════════════════════════════════════════ */
+.liq{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.liq i{position:absolute;inset:0;opacity:0;animation:liq 52s ease-in-out infinite}
+
+/* 1 · curaçao — azul medianoche */
+.liq i:nth-child(1){animation-delay:0s;background:
+  radial-gradient(105% 52% at 50% 104%, #17466B 0%, rgba(23,70,107,0) 60%),
+  radial-gradient(88% 62% at 16% -4%,  #123A5E 0%, rgba(18,58,94,0) 58%),
+  linear-gradient(168deg,#0A1A2E 0%,#12314F 46%,#050C16 100%)}
+/* 2 · crème de violette — violeta profundo */
+.liq i:nth-child(2){animation-delay:13s;background:
+  radial-gradient(105% 52% at 50% 104%, #4A2160 0%, rgba(74,33,96,0) 60%),
+  radial-gradient(88% 62% at 16% -4%,  #33184A 0%, rgba(51,24,74,0) 58%),
+  linear-gradient(168deg,#1B0F2A 0%,#2E1846 46%,#0C0714 100%)}
+/* 3 · campari — granate */
+.liq i:nth-child(3){animation-delay:26s;background:
+  radial-gradient(105% 52% at 50% 104%, #6B1F33 0%, rgba(107,31,51,0) 60%),
+  radial-gradient(88% 62% at 16% -4%,  #4A1526 0%, rgba(74,21,38,0) 58%),
+  linear-gradient(168deg,#25101A 0%,#401826 46%,#12070C 100%)}
+/* 4 · amaretto — ámbar quemado */
+.liq i:nth-child(4){animation-delay:39s;background:
+  radial-gradient(105% 52% at 50% 104%, #6B3D1A 0%, rgba(107,61,26,0) 60%),
+  radial-gradient(88% 62% at 16% -4%,  #4A2A12 0%, rgba(74,42,18,0) 58%),
+  linear-gradient(168deg,#251708 0%,#402512 46%,#120A05 100%)}
+
+@keyframes liq{0%,100%{opacity:0} 4%{opacity:1} 21%{opacity:1} 26%{opacity:0}}
+
+#bg{position:fixed}
+#gate::before{z-index:1}
+#gate > span:not(.liq){position:relative;z-index:2}
 
 #canvas-wrap{position:fixed;inset:0;z-index:1}
 canvas{display:block;width:100%;height:100%}
@@ -113,11 +146,7 @@ canvas{display:block;width:100%;height:100%}
 #gate{
   position:fixed;inset:0;z-index:20;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
-  background:
-    radial-gradient(105% 52% at 50% 104%, #24486E 0%, rgba(36,72,110,0) 60%),
-    radial-gradient(88% 62% at 16% -4%,  #172C4E 0%, rgba(23,44,78,0) 58%),
-    radial-gradient(78% 52% at 92% 6%,   #1E3A63 0%, rgba(30,58,99,0) 54%),
-    linear-gradient(168deg,#0C1729 0%,#122442 46%,#050A13 100%);
+  background:#0A1524;
   border:0;width:100%;font-family:inherit;color:inherit;cursor:pointer;
   padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
   transition:opacity .9s ease,visibility .9s;
@@ -253,7 +282,8 @@ canvas{display:block;width:100%;height:100%}
 #snd.muted .slash{opacity:1}
 
 @media (prefers-reduced-motion: reduce){
-  .mark,.gate-text,.gate-hint,#gate::before{animation:none}
+  .mark,.gate-text,.gate-hint,#gate::before,.liq i{animation:none}
+  .liq i:nth-child(1){opacity:1}
   .mark::before,.mark::after{display:none}
   .gate-hint{opacity:.85}
   #note{transition-duration:.35s}
@@ -263,6 +293,7 @@ canvas{display:block;width:100%;height:100%}
 </head>
 <body>
 
+<div id="bg" class="liq" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <div id="canvas-wrap"></div>
 <div id="scrim"></div>
 
@@ -284,6 +315,7 @@ canvas{display:block;width:100%;height:100%}
 </div>
 
 <button id="gate">
+  <span class="liq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
   <span class="mark"></span>
   <span class="gate-text" data-slot="PORTADA"></span>
   <span class="gate-hint" data-slot="BOTON"></span>
@@ -1122,10 +1154,17 @@ var dust;
    misma velocidad (son la pared del proyectil), así que forman una
    esfera nítida que se expande, no una nube difusa. Además se enfrían
    de dorado a naranja a rojo mientras se apagan.                       */
-var FW_SLOTS = 10, FW_SPARKS = 72, FW_TRAIL = 4;
+var FW_SLOTS = 12, FW_SPARKS = 72, FW_TRAIL = 4;
 var FW_N = FW_SLOTS*FW_SPARKS*FW_TRAIL;
 var FW_LAUNCH = 0.50, FW_TRAIL_DT = 0.034;
-var FW_COLORS = [0xFFD98A, 0xFFF0DC, 0xFF9DA8, 0xFFC46B, 0xFF8E6B, 0xCFE6FF];
+// [hex, seEnfría]. Las chispas de carbón/oro viran a naranja y rojo al
+// apagarse; las de sales metálicas (verde, azul, violeta) mantienen su
+// color y sólo bajan de brillo. Enfriar todo mataba los colores fríos.
+var FW_COLORS = [
+  [0xFFD98A,1],[0xFFF0DC,1],[0xFFC46B,1],[0xFF8E6B,1],
+  [0xFF5A6E,0],[0x6BE6FF,0],[0xB98CFF,0],[0x7CFF9E,0],
+  [0xFF7AD4,0],[0x8AB0FF,0]
+];
 
 /* tres tipos de carcasa */
 var FW_TYPES = [
@@ -1136,6 +1175,8 @@ var FW_TYPES = [
 
 var fwPoints=null, fwSlots=[], fwPos=null, fwCol=null, fwBase=null, fwVel=null;
 var fwQueue=[], fwRR=0, fwNextIdle=1e9;
+var _fwDamp=new Float32Array(8), _fwDrop=new Float32Array(8),
+    _fwTail=new Float32Array(8), _fwAlive=new Uint8Array(8);
 
 (function(){
   var c=document.createElement('canvas'); c.width=c.height=64;
@@ -1201,8 +1242,9 @@ function fwLaunch(slot, t){
   var targetR = hh*ty.rad;                      // radio del casco en unidades de mundo
   var spd = targetR*ty.drag;                    // desplazamiento máximo = spd/drag
 
-  var base = lin(FW_COLORS[Math.floor(RFW()*FW_COLORS.length)]);
-  var alt  = lin(FW_COLORS[Math.floor(RFW()*FW_COLORS.length)]);
+  var bi = Math.floor(RFW()*FW_COLORS.length), ai = Math.floor(RFW()*FW_COLORS.length);
+  var base = lin(FW_COLORS[bi][0]), alt = lin(FW_COLORS[ai][0]);
+  s.cool = FW_COLORS[bi][1] && FW_COLORS[ai][1];
   for (var i=0;i<FW_SPARKS;i++){
     var n=(slot*FW_SPARKS+i)*3;
     // dirección uniforme sobre la esfera; magnitud casi constante
@@ -1254,25 +1296,38 @@ function fwUpdate(t){
     var pl = a/ty.life;                              // 0..1 de vida
     var fade = Math.pow(Math.max(0,1-pl), 1.65);
     var flash = a < 0.08 ? 1 + (1-a/0.08)*2.8 : 1;   // destello del estallido
-    // enfriamiento: dorado -> naranja -> rojo al apagarse
-    var cg = 1 - 0.42*pl, cb = 1 - 0.82*pl;
+    // enfriamiento: dorado -> naranja -> rojo. Sólo en las chispas cálidas.
+    var cg = sl.cool ? 1 - 0.42*pl : 1;
+    var cb = sl.cool ? 1 - 0.82*pl : 1;
 
+    // damp, caída y atenuación de cola dependen SÓLO del índice de estela.
+    // Calcularlos por chispa hacía 2880 Math.exp por frame; así son 4.
+    for (j=0;j<FW_TRAIL;j++){
+      var aj = a - j*FW_TRAIL_DT*ty.trail;           // la misma chispa, antes
+      _fwAlive[j] = aj > 0 ? 1 : 0;
+      _fwDamp[j]  = aj > 0 ? (1-Math.exp(-ty.drag*aj))/ty.drag : 0;
+      _fwDrop[j]  = aj > 0 ? 0.5*ty.g*aj*aj : 0;
+      _fwTail[j]  = fade*flash*Math.pow(1 - j/FW_TRAIL, 1.5);
+    }
+
+    var hard = ty.twinkle > 0.5;
     for (i=0;i<FW_SPARKS;i++){
       sp=(s*FW_SPARKS+i)*3;
-      var tw = ty.twinkle > 0.5
+      var tw = hard
         ? (Math.sin(a*34 + i*2.3) > -0.15 ? 1 : 0.18)          // centelleo duro
         : (1 - ty.twinkle) + ty.twinkle*(0.5+0.5*Math.sin(a*22 + i*1.7));
+      var vx=fwVel[sp], vy=fwVel[sp+1], vz=fwVel[sp+2];
+      var br=fwBase[sp], bg=fwBase[sp+1], bb=fwBase[sp+2];
       for (j=0;j<FW_TRAIL;j++){
         q=((s*FW_SPARKS+i)*FW_TRAIL+j)*3;
-        var aj = a - j*FW_TRAIL_DT*ty.trail;         // la misma chispa, antes
-        if (aj <= 0){ fwPos[q]=sl.ox; fwPos[q+1]=sl.oy; fwPos[q+2]=sl.oz;
-                      fwCol[q]=fwCol[q+1]=fwCol[q+2]=0; continue; }
-        var damp=(1-Math.exp(-ty.drag*aj))/ty.drag;
-        fwPos[q]   = sl.ox + fwVel[sp]*damp;
-        fwPos[q+1] = sl.oy + fwVel[sp+1]*damp - 0.5*ty.g*aj*aj;
-        fwPos[q+2] = sl.oz + fwVel[sp+2]*damp;
-        var b = fade*flash*tw*Math.pow(1 - j/FW_TRAIL, 1.5);
-        fwCol[q]=fwBase[sp]*b; fwCol[q+1]=fwBase[sp+1]*b*cg; fwCol[q+2]=fwBase[sp+2]*b*cb;
+        if (!_fwAlive[j]){ fwPos[q]=sl.ox; fwPos[q+1]=sl.oy; fwPos[q+2]=sl.oz;
+                           fwCol[q]=fwCol[q+1]=fwCol[q+2]=0; continue; }
+        var dp=_fwDamp[j];
+        fwPos[q]   = sl.ox + vx*dp;
+        fwPos[q+1] = sl.oy + vy*dp - _fwDrop[j];
+        fwPos[q+2] = sl.oz + vz*dp;
+        var b = _fwTail[j]*tw;
+        fwCol[q]=br*b; fwCol[q+1]=bg*b*cg; fwCol[q+2]=bb*b*cb;
       }
     }
   }
@@ -1283,9 +1338,9 @@ function fwUpdate(t){
 
 /* Salva al abrir; después, estallidos sueltos seguidos. */
 function fwVolley(t){
-  var at=[0.08,0.42,0.80,1.15,1.55,1.95,2.35,2.80,3.25,3.70,4.20,4.70];
+  var at=[0.08,0.34,0.62,0.92,1.22,1.52,1.84,2.16,2.50,2.84,3.20,3.56,3.94,4.32,4.72,5.12];
   for (var i=0;i<at.length;i++) fwQueue.push(t+at[i]);
-  fwNextIdle = t + 5.6;
+  fwNextIdle = t + 5.4;
 }
 
 /* ═══════════════ encuadre responsive ═══════════════ */
@@ -1467,7 +1522,7 @@ function frame(){
     }
     if (opened && elapsed > fwNextIdle){
       fwLaunch(fwRR % FW_SLOTS, elapsed); fwRR++;
-      fwNextIdle = elapsed + 3.2 + RFW()*3.4;
+      fwNextIdle = elapsed + 1.5 + RFW()*2.2;
     }
     fwUpdate(elapsed);
   }
