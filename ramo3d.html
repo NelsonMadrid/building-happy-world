@@ -12,11 +12,11 @@
      ══════════════════════════════════════════════════════════════════ -->
 <script>
 window.RAMO_TEXTO = {
-  NOMBRE : "Ana",
+  NOMBRE : "Anahela",
   FECHA  : "5 de agosto",
   SALUDO : "Feliz cumpleaños,",
   MENSAJE: "Que Dios te cumpla todos los deseos de tu corazón y que pases un día increíble con los que más quieres.",
-  FIRMA  : "— Nelson",
+  FIRMA  : "— Edgardo",
 
   // Pantalla inicial (antes de abrir)
   PORTADA: "Happy Birthday!!!",
@@ -999,26 +999,38 @@ var tails = [];
   band.position.y = -0.72;
   ribbonGroup.add(band);
 
-  // Dos bucles planos al frente, abiertos en V.
-  // Van en un grupo INCLINADO con la pendiente del cono: los bucles suben
-  // 0.26 y a esa altura el papel ya es bastante más ancho, así que sin la
-  // inclinación la punta del bucle terminaba metida dentro del envoltorio.
-  var CONE_SLOPE = 0.90;               // rad, pendiente de la pared del cono
+  // Dos bucles al frente. Se abren casi en HORIZONTAL, que es como cae un
+  // moño de verdad y además es la única dirección libre: el cono se
+  // ensancha hacia arriba, así que un bucle que suba termina metido dentro
+  // del papel. Acostarlo contra la pared lo resolvía pero lo dejaba tan
+  // escorzado que ya no se leía como moño; con los bucles al costado se
+  // puede dejar casi de frente.
+  // El grupo va reclinado con la pared del cono, pero los bucles se abren
+  // en HORIZONTAL: como la reclinación es sobre el eje X, sólo achata lo
+  // vertical. El largo del bucle, que va en X, se ve entero igual. Así se
+  // resuelve la intersección con el papel sin perder la forma de moño.
   var bowGroup = new THREE.Group();
-  bowGroup.position.set(0, -0.72, 0.70);
-  bowGroup.rotation.x = CONE_SLOPE;
+  bowGroup.position.set(0, -0.70, 0.76);
+  bowGroup.rotation.x = 0.72;
   ribbonGroup.add(bowGroup);
 
-  var loopGeo = bowLoopGeometry(0.30, 0.27, 0.078, 0.10);
+  // largo 0.38 sobre el eje del bucle, ancho de cinta 2*0.115
+  var loopGeo = bowLoopGeometry(0.115, 0.38, 0.075, 0.12);
   for (var s=-1; s<=1; s+=2){
     var loop = new THREE.Mesh(loopGeo, satinShaded);
-    loop.rotation.z = s*2.36;          // abre el bucle hacia el costado
-    loop.rotation.y = s*0.20;
+    loop.rotation.z = s*1.62;          // ~93°: el bucle se abre al costado
     bowGroup.add(loop);
   }
-  var knot = new THREE.Mesh(new THREE.SphereGeometry(0.058, 10, 8), satin);
-  knot.position.set(0, 0, 0.035);
-  knot.scale.set(1.6, 1.0, 0.8);
+  // dos puntas cortas cayendo del nudo
+  for (var s2=-1; s2<=1; s2+=2){
+    var tip = new THREE.Mesh(bowLoopGeometry(0.052, 0.26, 0.055, 0.04), satinShaded);
+    tip.rotation.z = s2*0.30;
+    tip.position.set(s2*0.03, -0.015, -0.02);
+    bowGroup.add(tip);
+  }
+  var knot = new THREE.Mesh(new THREE.SphereGeometry(0.052, 10, 8), satin);
+  knot.position.set(0, 0, 0.03);
+  knot.scale.set(1.5, 1.0, 0.8);
   bowGroup.add(knot);
 
   // colas onduladas (geometría actualizada por frame)
