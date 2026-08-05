@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0C1729">
+<meta name="theme-color" content="#090C13">
+<!-- Si la agrega a la pantalla de inicio, abre a pantalla completa sin barras -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Feliz cumpleaños">
+<meta name="format-detection" content="telephone=no">
 <title>Feliz cumpleaños</title>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -52,15 +58,31 @@ window.RAMO_TEXTO = {
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden}
+
+/* iOS: html y body fijos y sin scroll. Sólo con overflow:hidden, Safari
+   igual hace el rebote elástico y aparece una franja del color de fondo
+   arriba o abajo. Con el body en position:fixed no hay nada que desplazar.
+   El color de html cubre cualquier hueco mientras la barra de direcciones
+   se esconde y el viewport cambia de alto. */
+html{
+  height:100%;overflow:hidden;background:#0A1524;
+  overscroll-behavior:none;
+  -webkit-text-size-adjust:100%;   /* Safari agranda el texto en horizontal */
+  text-size-adjust:100%;
+}
 body{
+  position:fixed;inset:0;overflow:hidden;
+  overscroll-behavior:none;
+  -webkit-user-select:none;user-select:none;      /* no seleccionar al arrastrar */
+  -webkit-touch-callout:none;                     /* no menú al mantener pulsado */
+  -webkit-tap-highlight-color:transparent;        /* no destello gris al tocar */
+
   font-family:'Karla',system-ui,-apple-system,sans-serif;
   color:var(--ink);
   background:#0A1524;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
   touch-action:none;
-  overscroll-behavior:none;
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -101,7 +123,7 @@ body{
 #gate > span:not(.liq){position:relative;z-index:2}
 
 #canvas-wrap{position:fixed;inset:0;z-index:1}
-canvas{display:block;width:100%;height:100%}
+canvas{display:block;width:100%!important;height:100%!important}
 
 /* ───────── viñeta + scrim de legibilidad ─────────
    Va POR ENCIMA del canvas y POR DEBAJO del texto.
@@ -147,7 +169,7 @@ canvas{display:block;width:100%;height:100%}
   position:fixed;inset:0;z-index:20;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
   background:#0A1524;
-  border:0;width:100%;font-family:inherit;color:inherit;cursor:pointer;
+  border:0;width:100%;font-family:inherit;color:inherit;cursor:pointer;touch-action:manipulation;
   padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
   transition:opacity .9s ease,visibility .9s;
   -webkit-tap-highlight-color:transparent;
@@ -266,7 +288,7 @@ canvas{display:block;width:100%;height:100%}
   border:1px solid rgba(255,240,235,.22);
   background:rgba(14,26,45,.52);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-  color:#F3E4E0;cursor:pointer;padding:0;
+  color:#F3E4E0;cursor:pointer;padding:0;touch-action:manipulation;
   opacity:0;transition:opacity .9s ease,background .25s ease,border-color .25s ease;
   -webkit-tap-highlight-color:transparent;
 }
@@ -395,6 +417,7 @@ if (typeof THREE === 'undefined'){
 }
 
 var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var ctxLost = false;
 var TAU = Math.PI * 2;
 var GOLDEN = Math.PI * (3 - Math.sqrt(5));   // ángulo áureo
 
@@ -724,7 +747,7 @@ var camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 0.1, 100);
 
 var renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, powerPreference:'high-performance' });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));       // cap DPR = 2
-renderer.setSize(innerWidth, innerHeight);
+renderer.setSize(innerWidth, innerHeight, false);
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.02;
@@ -1437,11 +1460,63 @@ function fit(){
 
   camera.updateProjectionMatrix();
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.setSize(w,h);
+  renderer.setSize(w, h, false);   // false = no tocar el estilo, lo manda el CSS
 }
 fit();
-addEventListener('resize', fit);
-addEventListener('orientationchange', function(){ setTimeout(fit, 120); });
+/* Redimensionado al estilo iOS.
+   Safari cambia el alto del viewport cuando esconde o muestra la barra de
+   direcciones, y dispara una ráfaga de resize. Si el lienzo se queda con
+   el alto viejo, queda una franja del color de fondo arriba o abajo.
+   Se agenda el reajuste en el siguiente frame para no recalcular decenas
+   de veces por segundo, y se escucha también visualViewport, que en iOS
+   es el que refleja el alto real. */
+var fitPending = false;
+function fitSoon(){
+  if (fitPending) return;
+  fitPending = true;
+  requestAnimationFrame(function(){ fitPending = false; fit(); });
+}
+addEventListener('resize', fitSoon);
+addEventListener('orientationchange', function(){ setTimeout(fit, 150); setTimeout(fit, 450); });
+if (window.visualViewport){
+  visualViewport.addEventListener('resize', fitSoon);
+  visualViewport.addEventListener('scroll', fitSoon);
+}
+// al volver desde el historial o desde otra app
+addEventListener('pageshow', function(){ setTimeout(fit, 60); });
+document.addEventListener('visibilitychange', function(){
+  if (!document.hidden){ if (clock) clock.getDelta(); fitSoon(); }  // descartar el salto de tiempo
+});
+
+/* Nada que desplazar, pero iOS igual intenta el rebote con dos dedos o
+   con un arrastre que empiece fuera del lienzo. */
+document.addEventListener('touchmove', function(e){
+  if (e.cancelable) e.preventDefault();
+}, { passive:false });
+document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
+document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+/* Pérdida del contexto WebGL: en iOS pasa al dejar la página en segundo
+   plano un rato o si el sistema anda justo de memoria. Sin manejarlo, el
+   lienzo se queda congelado en un color plano y no vuelve más.
+   preventDefault en el evento es lo que habilita la restauración. */
+renderer.domElement.addEventListener('webglcontextlost', function(e){
+  e.preventDefault();
+  ctxLost = true;
+}, false);
+var ctxReloading = false;
+renderer.domElement.addEventListener('webglcontextrestored', function(){
+  if (ctxReloading) return;
+  ctxReloading = true;
+  // Tope de seguridad: si un equipo no puede sostener el contexto, no hay
+  // que quedar recargando en bucle. A la tercera se deja la página quieta
+  // con el mensaje y la firma visibles, que es lo que importa.
+  var n = 0;
+  try { n = (+sessionStorage.getItem('ramoReload') || 0) + 1;
+        sessionStorage.setItem('ramoReload', n); } catch(e){ n = 1; }
+  if (n <= 2) location.reload();
+  else { document.getElementById('note').classList.add('in'); }
+}, false);
 
 /* ═══════════════ interacción ═══════════════ */
 var REST_Y = 0.0, REST_X = 0.0;
@@ -1608,7 +1683,7 @@ function frame(){
     dust.geometry.attributes.position.needsUpdate = true;
   }
 
-  renderer.render(scene, camera);
+  if (!ctxLost) renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
 
