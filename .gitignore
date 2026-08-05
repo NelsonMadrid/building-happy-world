@@ -1,0 +1,15 @@
+# Audio de ramo3d.html.
+#
+# Queda FUERA de git a propósito: este repositorio es público y la pista es
+# comercial, así que subirla lo dejamos como decisión explícita y no como
+# algo que se cuela en un commit.
+#
+# Si desplegás por carga directa a Cloudflare Pages (arrastrando la carpeta),
+# dejalo así: subís ramo3d.html y cancion.mp3 juntos y la música funciona.
+#
+# Si desplegás desde GitHub y querés que suene, hay que versionarla:
+#   1. borrá o comentá la línea de abajo
+#   2. git add -f cancion.mp3
+#
+# Para quitar la música sin más, poné CANCION: "" arriba en ramo3d.html.
+cancion.mp3
