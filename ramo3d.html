@@ -401,6 +401,7 @@ var GOLDEN = Math.PI * (3 - Math.sqrt(5));   // ángulo áureo
 /* ═══════════════ paleta ═══════════════ */
 var ROSE_TONES = [0x9C1E31, 0x84142A, 0xAE2A3C, 0x6B0F22];  // familia rojo borgoña
 var LEAF_TONES = [0x3E5C39, 0x4A6B41, 0x334E30, 0x557A48];
+var STEM_TONES = [0x46612F, 0x3A5228, 0x53663A, 0x334A25];  // verdes de tallo, profundos
 var PAPER_OUT  = 0xE6D5BA;   // papel crema — contrasta contra el fondo oscuro
 var PAPER_IN   = 0x8E7355;
 var RIBBON_COL = 0xC9A46E;   // satén champán
@@ -987,13 +988,54 @@ bouquet.add(paperGroup);
   bouquet.add(sh);
 })();
 
-/* ── tallos: manojo que sale por debajo del cono ── */
+/* ── tallos: manojo que sale por debajo del cono ──
+   Eran cilindros rectos y claros, y como no hay mapas de sombra el
+   envoltorio no los oscurecía: leían como palitos blancos. Ahora van
+   curvados, con el sombreado del papel horneado en los vértices (oscuro
+   arriba, donde quedan metidos bajo el cono), veta longitudinal, punta
+   de corte pálida y alguna espina.                                      */
+function stemGeometry(){
+  var RS=7, HS=8;
+  var vc=(RS+1)*(HS+1);
+  var pos=new Float32Array(vc*3), col=new Float32Array(vc*3), idx=[], k=0;
+  for (var jh=0; jh<=HS; jh++){
+    var t=jh/HS;                               // 0 = arriba (bajo el papel), 1 = corte
+    var rad = 0.026 + 0.012*t;                 // engrosa hacia la base
+    var bend = 0.075*t*t;                      // curva suave: ningún tallo es recto
+    for (var ja=0; ja<=RS; ja++){
+      var a=(ja/RS)*TAU;
+      pos[k*3]   = Math.cos(a)*rad + bend;
+      pos[k*3+1] = t;
+      pos[k*3+2] = Math.sin(a)*rad;
+      // sombra del envoltorio + veta longitudinal
+      var sh = 0.30 + 0.70*Math.pow(t, 0.75);
+      sh *= 0.86 + 0.14*Math.abs(Math.cos(a*1.5));
+      col[k*3]=sh; col[k*3+1]=sh; col[k*3+2]=sh;
+      k++;
+    }
+  }
+  for (var i=0;i<HS;i++) for (var j=0;j<RS;j++){
+    var A=i*(RS+1)+j, B=A+RS+1;
+    idx.push(A,B,A+1, A+1,B,B+1);
+  }
+  var g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  g.setAttribute('color', new THREE.BufferAttribute(col,3));
+  g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+
 (function(){
   var R3 = rng(31337), parts=[], m=new THREE.Matrix4(), q=new THREE.Quaternion();
   var YAX = new THREE.Vector3(0,1,0);
   var N = 15;
-  var stemGeo = new THREE.CylinderGeometry(0.030, 0.036, 1, 6, 1, false);
-  stemGeo.translate(0, 0.5, 0);                        // pivote arriba, cuerpo en +Y
+  var stemGeo = stemGeometry();
+  // tapa del corte: un poco más pálida, como tallo recién cortado
+  var cutGeo = new THREE.CircleGeometry(0.038, 8);
+  cutGeo.rotateX(-Math.PI/2);
+  var thornGeo = new THREE.ConeGeometry(0.016, 0.055, 5);
+  thornGeo.translate(0, 0.027, 0);
+
   for (var i=0;i<N;i++){
     var a = (i/N)*TAU + R3()*0.5;
     var r = 0.05 + R3()*0.075;
@@ -1002,12 +1044,34 @@ bouquet.add(paperGroup);
     // se abren un poco hacia abajo, como un manojo cortado
     var dir = new THREE.Vector3(Math.cos(a)*(0.16+R3()*0.20), -1, Math.sin(a)*(0.16+R3()*0.20)).normalize();
     q.setFromUnitVectors(YAX, dir);
+    // verde profundo, con algunos tallos más oliva y otros más fríos
+    var c = lin(STEM_TONES[i % STEM_TONES.length]).multiplyScalar(0.62 + R3()*0.38);
+
     m.compose(top, q, new THREE.Vector3(1, len, 1));
-    var c = lin(0x8FA86A).multiplyScalar(0.62 + R3()*0.55);
     parts.push({ geo:stemGeo, matrix:m.clone(), color:c });
+
+    var mm = m.clone();
+    // tapa del corte, al final del tallo
+    var cut = new THREE.Matrix4().compose(
+      top.clone().addScaledVector(dir, len), q, new THREE.Vector3(1,1,1));
+    parts.push({ geo:cutGeo, matrix:cut, color:c.clone().multiplyScalar(2.1) });
+
+    // una o dos espinas por tallo
+    var nth = 1 + (R3()>0.55 ? 1 : 0);
+    for (var s=0; s<nth; s++){
+      var ht = 0.22 + R3()*0.55;
+      var ang = R3()*TAU;
+      var qt = q.clone().multiply(new THREE.Quaternion().setFromAxisAngle(YAX, ang))
+                        .multiply(new THREE.Quaternion().setFromAxisAngle(
+                          new THREE.Vector3(0,0,1), -1.05 - R3()*0.35));
+      var pt = top.clone().addScaledVector(dir, len*ht);
+      parts.push({ geo:thornGeo,
+                   matrix:new THREE.Matrix4().compose(pt, qt, new THREE.Vector3(1,1,1)),
+                   color:c.clone().multiplyScalar(0.85) });
+    }
   }
   var mesh = new THREE.Mesh(mergeGeos(parts), new THREE.MeshStandardMaterial({
-    vertexColors:true, roughness:0.86, metalness:0
+    vertexColors:true, roughness:0.92, metalness:0
   }));
   mesh.frustumCulled = false;
   bouquet.add(mesh);
