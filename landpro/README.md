@@ -1,23 +1,34 @@
 # LandPro Excavations — Website
 
-Static site (HTML + CSS + JS, no build step). Open `index.html` or host the `landpro/` folder on any static host (GitHub Pages, Netlify, etc.).
+Static site (HTML + CSS + JS, no build step). Host the `landpro/` folder on any static host (GitHub Pages, Netlify…).
 
-## Quick edits
-- **Phone, email, service area, cities, social links** → `CONFIG` at the top of `js/main.js`
-  (also update the `tel:`/`mailto:` values and the JSON-LD block in `index.html` for SEO).
-- **Colors / fonts** → CSS variables at the top of `css/styles.css`.
-- **Text (English)** → directly in `index.html`. **Spanish** → `ES` object in `js/main.js` (same keys as `data-i18n`).
-- **Quote form** → create a form on formspree.io and set `action="https://formspree.io/f/XXXX"` on `#quoteForm`.
+- `index.html` — home (hero, intro, services, projects, process, about, visit, testimonials, CTA, contact)
+- `project.html?p=<slug>` — editorial project page, generated from `js/data.js`
+- English is the default; the EN / ES toggle is remembered per visitor.
 
-## Photos (drop into `img/`, placeholders show until then)
-| File | Where |
+## Editing
+| What | Where |
 |---|---|
-| `hero.jpg` | Hero background (landscape, ≥1920px wide) |
-| `about.jpg` | About section (portrait 4:5) |
-| `before.jpg` / `after.jpg` | Before/after slider (same framing, 16:8) |
-| `project-1.jpg` … `project-6.jpg` | Project gallery (4:3) |
-| `og-image.jpg` | Social share preview (1200×630) |
+| Phone, email, address, hours, region, social links | `CONFIG` in `js/data.js` (also `tel:`/JSON-LD in `index.html`) |
+| Projects (name, location, service, text, gallery) | `PROJECTS` in `js/data.js` |
+| English text | directly in the HTML |
+| Spanish text | `ES` in `js/data.js` (same keys as `data-i18n`) |
+| Colors / fonts | variables at the top of `css/styles.css` |
+| Contact form email | set `action="https://formspree.io/f/XXXX"` on `#inquiry` |
+
+## Photography
+The images in `img/` are **generated placeholders** (atmospheric landscapes and material textures).
+Replace each file with a real photograph **using the same file name** and the site updates automatically.
+
+| File(s) | Use | Suggested shot |
+|---|---|---|
+| `hero.jpg` | Full-screen hero (landscape, ≥2400px) | Machine working at the edge of a cleared site, early light |
+| `discipline-*.jpg` | Services (portrait 4:5) | Close, textured details: timber, mulch, cut soil, graded pad, water, gravel |
+| `project-*.jpg` | Project covers | Finished sites, wide and calm |
+| `process-*.jpg` | Process steps (4:5) | Site walk, plans/stakes, clearing, final grade |
+| `about-*.jpg`, `yard-*.jpg` | About & Visit | Crew, owner, fleet, yard |
+| `detail-*.jpg` | Project detail pages | Material close-ups |
+| `cta.jpg` | Final call to action (wide) | Most striking landscape |
 
 ## Before launch
-- Replace the sample stats (years, acres, projects) and the **sample testimonials** with real ones.
-- Replace placeholder phone/email/area.
+- Replace sample projects, testimonials (“Client Name”) and placeholder contact details.

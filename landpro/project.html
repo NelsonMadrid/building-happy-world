@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project — LandPro Excavations</title>
+  <meta name="description" content="A LandPro Excavations project." />
+  <meta name="theme-color" content="#171614" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23171614'/%3E%3Cpath d='M6 22h20M9 18h14' stroke='%23F4F1EC' stroke-width='1.6'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="page-project">
+
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="brand" aria-label="LandPro Excavations — home">
+        <span class="brand-name">LandPro</span>
+        <span class="brand-sub">Excavations</span>
+      </a>
+      <nav class="nav-links" id="navLinks" aria-label="Main">
+        <a href="index.html#about" data-i18n="nav.about">About</a>
+        <a href="index.html#services" data-i18n="nav.services">Services</a>
+        <a href="index.html#projects" data-i18n="nav.projects">Projects</a>
+        <a href="index.html#process" data-i18n="nav.process">Process</a>
+        <a href="index.html#contact" data-i18n="nav.contact">Contact</a>
+      </nav>
+      <div class="nav-end">
+        <div class="lang" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="true">EN</button><span>/</span><button type="button" data-lang="es" aria-pressed="false">ES</button>
+        </div>
+        <a href="index.html#contact" class="nav-cta"><span data-i18n="nav.start">Start a Project</span> <span class="arrow">→</span></a>
+        <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks"><span class="menu-label" data-i18n="nav.menu">Menu</span><span class="menu-lines" aria-hidden="true"><i></i><i></i></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="pd-hero">
+      <div class="hero-media" data-parallax="0.18"><img id="pdHeroImg" src="" alt="" width="1600" height="2000" /></div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="wrap pd-hero-content">
+        <a href="index.html#projects" class="pd-back fade"><span class="arrow">←</span> <span data-i18n="pd.back">All projects</span></a>
+        <p class="kicker fade" id="pdKicker"></p>
+        <h1 class="hero-title split" id="pdTitle"></h1>
+      </div>
+    </section>
+
+    <!-- Meta + story -->
+    <section class="section pd-intro">
+      <div class="wrap pd-intro-grid">
+        <dl class="pd-meta reveal">
+          <div><dt data-i18n="pd.location">Location</dt><dd id="pdLocation"></dd></div>
+          <div><dt data-i18n="pd.service">Service</dt><dd id="pdService"></dd></div>
+          <div><dt data-i18n="pd.size">Scope</dt><dd id="pdSize"></dd></div>
+          <div><dt data-i18n="pd.duration">Duration</dt><dd id="pdDuration"></dd></div>
+          <div><dt data-i18n="pd.year">Year</dt><dd id="pdYear"></dd></div>
+        </dl>
+        <div class="pd-story">
+          <p class="pd-lead split" id="pdLead"></p>
+          <p class="reveal" id="pdBody"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery (filled by JS) -->
+    <section class="pd-gallery" id="pdGallery" aria-label="Gallery"></section>
+
+    <!-- Next project -->
+    <a class="pd-next" id="pdNext" href="#">
+      <div class="final-media"><img id="pdNextImg" src="" alt="" loading="lazy" /></div>
+      <div class="final-shade" aria-hidden="true"></div>
+      <div class="wrap pd-next-content">
+        <p class="kicker" data-i18n="pd.next">Next project</p>
+        <p class="display light" id="pdNextTitle"></p>
+        <span class="link-arrow light"><span data-i18n="projects.view">View Project</span> <span class="arrow">→</span></span>
+      </div>
+    </a>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="brand"><span class="brand-name">LandPro</span><span class="brand-sub">Excavations</span></a>
+        <p data-i18n="footer.about">Land clearing, excavation and site preparation, carried out with precision and care.</p>
+      </div>
+      <div>
+        <p class="footer-h" data-i18n="footer.nav">Navigate</p>
+        <ul>
+          <li><a href="index.html#about" data-i18n="nav.about">About</a></li>
+          <li><a href="index.html#services" data-i18n="nav.services">Services</a></li>
+          <li><a href="index.html#projects" data-i18n="nav.projects">Projects</a></li>
+          <li><a href="index.html#process" data-i18n="nav.process">Process</a></li>
+          <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-h" data-i18n="footer.contact">Contact</p>
+        <ul>
+          <li><a href="tel:+15551234567" data-cfg="phone" data-cfg-href="phoneHref">(555) 123-4567</a></li>
+          <li><a href="mailto:hello@landproexcavations.com" data-cfg="email" data-cfg-href="emailHref">hello@landproexcavations.com</a></li>
+          <li data-cfg="address">Yard &amp; Office — Your City, ST</li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-h" data-i18n="footer.follow">Follow</p>
+        <ul>
+          <li><a href="#" data-cfg-href="instagram">Instagram</a></li>
+          <li><a href="#" data-cfg-href="facebook">Facebook</a></li>
+          <li><a href="#" data-cfg-href="youtube">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap footer-base">
+      <p>© <span class="year">2026</span> LandPro Excavations. <span data-i18n="footer.rights">All rights reserved.</span></p>
+      <a href="#top" data-i18n="footer.top">Back to top</a>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
