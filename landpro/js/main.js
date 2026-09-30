@@ -157,7 +157,7 @@
     const grid = $('#projectGrid');
     if (!grid) return;
     grid.innerHTML = PROJECTS.map(p => `
-      <a class="proj" href="project.html?p=${p.slug}">
+      <a class="proj" href="project.html#${p.slug}">
         <div class="media reveal-img"><img src="${p.hero}" alt="${p.name}" loading="lazy" /></div>
         <span class="proj-view">${t('projects.view')} →</span>
         <div class="proj-info">
@@ -171,7 +171,7 @@
   /* ─────────────── Project detail page ─────────────── */
   function renderProjectPage() {
     if (!document.body.classList.contains('page-project')) return;
-    const slug = new URLSearchParams(location.search).get('p');
+    const slug = location.hash.slice(1) || new URLSearchParams(location.search).get('p');
     const idx = Math.max(0, PROJECTS.findIndex(p => p.slug === slug));
     const p = PROJECTS[idx];
     if (!p) return;
@@ -200,7 +200,7 @@
     if (last && g.length > 3) html += `<div class="wrap">${cap('pd.result')}<div class="pd-full">${img(last)}</div></div>`;
     $('#pdGallery').innerHTML = html;
 
-    $('#pdNext').href = `project.html?p=${next.slug}`;
+    $('#pdNext').href = `project.html#${next.slug}`;
     $('#pdNextImg').src = next.hero;
     $('#pdNextTitle').textContent = next.name;
     observeAll();
@@ -268,5 +268,12 @@
     initQuotes();
     initForm();
     requestAnimationFrame(observeAll);
+
+    // project pages link to each other by hash (project.html#slug)
+    window.addEventListener('hashchange', () => {
+      if (!document.body.classList.contains('page-project')) return;
+      renderProjectPage();
+      window.scrollTo(0, 0);
+    });
   });
 })();
