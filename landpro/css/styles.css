@@ -146,8 +146,8 @@ em { font-style: italic; }
 .service-hover { position: absolute; inset: 0; bottom: auto; aspect-ratio: 4 / 5; display: flex; flex-direction: column; justify-content: flex-end; padding: 32px; color: var(--paper); background: linear-gradient(180deg, transparent 50%, rgba(10, 10, 9, .45)); opacity: 0; transition: opacity .8s var(--ease); pointer-events: none; }
 .service-hover-name { font-family: var(--serif); font-size: clamp(30px, 2.6vw, 42px); line-height: 1.05; transform: translateY(14px); transition: transform .9s var(--ease); }
 .service-hover-cta { margin-top: 12px; opacity: .85; transform: translateY(14px); transition: transform .9s var(--ease) .06s; }
-.service-cap { display: grid; grid-template-columns: 38px 1fr; gap: 2px 0; padding-top: 20px; }
-.service-num { color: var(--stone); grid-row: span 2; padding-top: 7px; }
+.service-cap { display: grid; grid-template-columns: 44px 1fr; gap: 2px 0; padding-top: 20px; }
+.service-num { color: var(--char); font-size: 12.5px; font-weight: 500; letter-spacing: .12em; font-variant-numeric: tabular-nums; grid-row: span 2; padding-top: 8px; }
 .service-name { font-family: var(--serif); font-size: 26px; line-height: 1.2; }
 .service-desc { font-size: 14px; color: var(--stone); }
 @media (hover: hover) {
@@ -189,7 +189,7 @@ em { font-style: italic; }
 .step:nth-child(even) { margin-top: clamp(40px, 5vw, 88px); }
 .step .media { aspect-ratio: 4 / 5; }
 .step-head { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
-.step-num { color: var(--stone); }
+.step-num { color: var(--char); font-size: 12.5px; font-weight: 500; letter-spacing: .12em; font-variant-numeric: tabular-nums; }
 .step-rule { width: 28px; height: 1px; background: var(--line); background: var(--stone); opacity: .5; }
 .step-title { font-family: var(--sans); font-size: 12px; letter-spacing: .24em; text-transform: uppercase; font-weight: 500; }
 .step-text { font-family: var(--serif); font-size: 24px; line-height: 1.25; margin-top: 12px; max-width: 16ch; }
@@ -375,7 +375,7 @@ em { font-style: italic; }
   .intro-text { margin: 40px 0 0; font-size: 16px; }
 
   /* services become a swipeable filmstrip */
-  .services-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; padding-bottom: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .services-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); gap: 14px; padding-bottom: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .services-track::-webkit-scrollbar { display: none; }
   .service { flex: 0 0 78%; scroll-snap-align: start; }
   .service:nth-child(3n+2) { margin-top: 0; }
@@ -395,7 +395,7 @@ em { font-style: italic; }
   .proj:nth-child(5) .media { margin-top: 0; }
   .proj-view { display: none; }
 
-  .process-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; scrollbar-width: none; padding-right: var(--gutter); }
+  .process-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); gap: 14px; scrollbar-width: none; padding-right: var(--gutter); }
   .process-track::-webkit-scrollbar { display: none; }
   .step { flex: 0 0 74%; scroll-snap-align: start; }
   .step:nth-child(n) { margin-top: 0; }
