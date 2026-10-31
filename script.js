@@ -239,7 +239,7 @@ const translations = {
       chip:     'Nuestra Historia',
       title:    'Un sueño que se convirtió en hogar',
       // EDITA los párrafos de la historia:
-      p1: 'Todo comenzó con un sueño: brindar a los niños de Gualjoco una educación bilingüe de calidad, sin tener que salir de su comunidad. Un grupo de educadores apasionados se unió con esa visión y abrió las puertas de Building a Happy World.',
+      p1: 'Todo comenzó con un sueño: brindar a los niños de Santa Bárbara una educación bilingüe de calidad, sin tener que ir lejos para encontrarla. Un grupo de educadores apasionados se unió con esa visión y abrió las puertas de Building a Happy World.',
       p2: 'Lo que empezó con unos pocos estudiantes y mucho amor, hoy es una institución reconocida por su excelencia académica, su ambiente familiar y su compromiso con el bilingüismo desde los primeros años.',
       founded:  'Fundada',
       // EDITA nombres y cargos de fundadores:
@@ -353,7 +353,7 @@ const translations = {
     map: { label:'Encuéntranos en Gualjoco, Santa Bárbara, Honduras', ph:'Aquí va el mapa de Google Maps', sub:'Inserta el iframe con la ubicación exacta' },
     /* ─── FOOTER ─── */
     footer: {
-      desc:'Formando líderes bilingües con valores desde Gualjoco, Honduras.',
+      desc:'Formando líderes bilingües con valores desde Santa Bárbara, Honduras.',
       nav:'Navegación', levels:'Niveles', contact:'Contacto',
       rights:'Todos los derechos reservados', made:'Hecho con', for:'para Honduras',
     },
@@ -431,7 +431,7 @@ const translations = {
     history: {
       chip:    'Our Story',
       title:   'A dream that became a home',
-      p1: 'It all started with a dream: to provide the children of Gualjoco with quality bilingual education, without having to leave their community. A group of passionate educators joined that vision and opened the doors of Building a Happy World.',
+      p1: 'It all started with a dream: to give the children of Santa Bárbara a quality bilingual education, without having to travel far to find it. A group of passionate educators joined that vision and opened the doors of Building a Happy World.',
       p2: 'What began with a few students and a lot of love is now an institution recognized for its academic excellence, family atmosphere, and commitment to bilingualism from the very first years of life.',
       founded: 'Founded',
       f1name:  'Founder\'s Name',     // ← EDITA
@@ -533,7 +533,7 @@ const translations = {
     },
     map: { label:'Find us in Gualjoco, Santa Bárbara, Honduras', ph:'Google Maps will go here', sub:'Insert the iframe with the exact location' },
     footer: {
-      desc:'Shaping bilingual leaders with values from Gualjoco, Honduras.',
+      desc:'Shaping bilingual leaders with values from Santa Bárbara, Honduras.',
       nav:'Navigation', levels:'Levels', contact:'Contact',
       rights:'All rights reserved', made:'Made with', for:'for Honduras',
     },
